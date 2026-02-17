@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>YKS Zen Ultimate Fix</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@700&display=swap" rel="stylesheet">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+    <style>
+        body { margin: 0; padding: 0; overflow: hidden; background: #000; color: #fff; font-family: 'Press Start 2P', cursive; font-size: 10px; user-select: none; }
+
+        /* --- ATMOSFER (ARKA PLAN) --- */
+        #sky-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -10; transition: background 2s ease; }
+        .day-theme { background: linear-gradient(to bottom, #4facfe 0%, #00f2fe 100%); }
+        .night-theme { background: linear-gradient(to bottom, #0f2027 0%, #203a43 50%, #2c5364 100%); }
+
+        #celestial-body { position: absolute; top: 10%; right: 10%; font-size: 80px; transition: all 1s ease; filter: drop-shadow(0 0 20px rgba(255,255,0,0.5)); }
+        
+        .cloud { 
+            position: absolute; width: 140px; height: 70px; 
+            background-image: url('https://i.ibb.co/q3Qkm8mm/download.png'); 
+            background-size: contain; background-repeat: no-repeat;
+            opacity: 0.8; z-index: -5; animation: floatCloud linear infinite; image-rendering: pixelated;
+        }
+        @keyframes floatCloud { from { transform: translateX(-200px); } to { transform: translateX(110vw); } }
+
+        /* YILDIZLAR (Tepeden Başlar, Aşağı Silinir) */
+        .stars { 
+            position: fixed; top: 0; left:0; width:100%; height:60%; 
+            background-image: radial-gradient(white 1px, transparent 1px); 
+            background-size: 50px 50px; opacity: 0; transition: opacity 1s; z-index: -6;
+            mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
+            -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
+        }
+        .stars.visible { opacity: 0.8; }
+
+        /* YAĞMUR / KAR */
+        #weather-effects { position: fixed; top:0; left:0; width:100%; height:100%; pointer-events: none; z-index: -4; }
+        .rain { position: absolute; width: 2px; height: 15px; background: rgba(200,200,255,0.5); animation: fall 0.5s linear infinite; }
+        .snow { position: absolute; width: 4px; height: 4px; background: white; border-radius: 50%; animation: fall 3s linear infinite; }
+        @keyframes fall { to { transform: translateY(110vh); } }
+
+        /* --- MERKEZ ODAK --- */
+        #center-container {
+            position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%);
+            text-align: center; width: 90%; z-index: 0;
+            text-shadow: 0 0 10px rgba(0,0,0,0.8);
+            transition: opacity 0.5s ease;
+        }
+        #motto-text { font-size: 20px; color: #f1c40f; margin-bottom: 10px; line-height: 1.5; transition: color 0.5s; }
+        #weather-info { font-size: 10px; color: #ddd; margin-bottom: 20px; }
+        
+        #center-timer {
+            font-size: 40px; color: #fff; letter-spacing: 3px;
+            font-family: 'Courier Prime', monospace; font-weight: bold;
+            display: none; text-shadow: 0 0 20px rgba(52, 152, 219, 0.8);
+        }
+        .break-mode { color: #3498db !important; text-shadow: 0 0 20px #2980b9 !important; }
+        
+        /* TUVALET MODU STİLLERİ */
+        .toilet-mode { color: #e74c3c !important; text-shadow: 0 0 20px #c0392b !important; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+
+        /* --- UI & PANELS --- */
+        .hud-top { position: fixed; top: 0; width: 100%; height: 60px; padding: 0 15px; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.4); backdrop-filter: blur(5px); border-bottom: 1px solid rgba(255,255,255,0.1); z-index: 1000; }
+        .hud-bottom { position: fixed; bottom: 0; width: 100%; height: 75px; background: #111; display: flex; border-top: 2px solid #555; overflow-x: auto; z-index: 1000;}
+        .nav-btn { flex: 1; min-width: 65px; background: none; border: none; color: #777; font-family: inherit; font-size: 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .nav-btn.active { color: #f1c40f; border-top: 3px solid #f1c40f; background: #222; }
+
+        /* MODALS */
+        .modal { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(10, 10, 10, 0.85); backdrop-filter: blur(8px);
+            z-index: 3000; display: flex; flex-direction: column; align-items: center; 
+            padding-top: 70px; overflow-y: auto; -webkit-overflow-scrolling: touch;
+        }
+        .hidden { display: none !important; }
+        .btn { background: #e67e22; color: #fff; border: 2px solid #fff; padding: 10px; font-family: inherit; cursor: pointer; margin: 5px; font-size: 8px;}
+        .close-btn { position: fixed; top: 15px; right: 15px; width: 40px; height: 40px; background: #c0392b; color: white; border: 2px solid white; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; z-index: 4500; border-radius: 8px; }
+
+        /* GİRİŞ EKRANI */
+        #auth-screen { 
+            position: fixed; top:0; left:0; width:100%; height:100%; z-index:9999; 
+            display:flex; align-items:center; justify-content:center; flex-direction: column; 
+            background: transparent; 
+        }
+        .auth-box { 
+            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(15px);
+            padding: 30px; border: 1px solid rgba(255,255,255,0.2); 
+            border-radius: 15px; text-align: center; width: 85%; max-width: 350px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .auth-input { width: 90%; padding: 15px; margin: 10px 0; background: rgba(0,0,0,0.5); border: 1px solid #555; color: #fff; font-family: inherit; font-size: 10px; text-align: center; border-radius: 5px; }
+        .secret-admin-btn { position: absolute; bottom: 15px; right: 15px; font-size: 30px; opacity: 0.1; cursor: pointer; color: #fff; z-index: 10000; }
+
+        /* MARKET & ITEMS */
+        .market-tabs { display: flex; width: 90%; justify-content: space-around; margin-bottom: 10px; }
+        .m-tab { background: #333; border: 1px solid #555; padding: 10px; flex: 1; text-align: center; cursor: pointer; }
+        .m-tab.active { background: #e67e22; color: #fff; border-color: #fff; }
+        
+        .locked-item { opacity: 0.6; pointer-events: none; filter: grayscale(100%); position: relative; border-color: #555 !important; }
+        .locked-item::after { content: '🔒'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 24px; text-shadow: 0 0 5px black; }
+        
+        .owned-item { opacity: 0.5; pointer-events: none; border-color: #27ae60 !important; background: #0f351e !important; }
+        #shop-container { width: 90%; padding-bottom: 150px; }
+
+        /* LISTS */
+        .leaderboard-row { background: rgba(30,30,30,0.8); width: 95%; padding: 12px; margin: 6px 0; display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 10px; border-bottom: 1px solid #444; }
+        .nametag-display { font-size: 8px; color: gold; border: 1px solid gold; padding: 2px 4px; border-radius: 3px; margin-right: 5px; }
+        .worker-gold { color: gold; text-shadow: 0 0 5px gold; font-weight: bold; }
+
+        /* POMODORO */
+        .pomodoro-container { display: flex; width: 95%; gap: 10px; margin-bottom: 20px;}
+        .pomo-left { flex: 1; display: flex; flex-direction: column; align-items: center; }
+        .pomo-right { flex: 1; background: rgba(0,0,0,0.5); border: 1px solid #444; padding: 5px; max-height: 250px; overflow-y: auto; display: flex; flex-direction: column; }
+        .timer-circle { width: 150px; height: 150px; border: 10px solid #3498db; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.3); margin: 20px 0; backdrop-filter: blur(5px); }
+        .timer-break { border-color: #3498db !important; color: #3498db; }
+        .timer-toilet { border-color: #e74c3c !important; color: #e74c3c; animation: pulse 1s infinite; }
+
+        /* MÜFREDAT */
+        .curriculum-tabs { display: flex; width: 90%; margin-bottom: 15px; }
+        .c-tab { flex: 1; padding: 10px; background: #333; text-align: center; border: 1px solid #555; cursor: pointer; }
+        .c-tab.active { background: #27ae60; color: white; border-color: #fff; }
+        .tyt-header { background: #222; padding: 15px; margin-top: 5px; cursor: pointer; display: flex; justify-content: space-between; border: 1px solid #333; }
+        .tyt-topics { display: none; padding: 10px; background: #111; }
+        .tyt-topics.open { display: block; }
+        .topic-item { padding: 8px; border-bottom: 1px solid #333; display: flex; align-items: center; }
+        #tyt-container { width: 95%; padding-bottom: 150px; }
+
+        /* ADMIN */
+        .admin-table { width: 98%; border-collapse: collapse; font-size: 8px; margin-top:10px; }
+        .admin-table th { background: #c0392b; padding: 5px; } .admin-table td { border: 1px solid #444; padding: 5px; }
+        .admin-input { background: #000; color: #0f0; border: 1px solid #555; padding: 5px; width: 60px; font-family: inherit; }
+        #admin-panel-content { width: 100%; padding-bottom: 150px; }
+        
+        .log-dim { color: #555; } .log-bright { color: #ccc; } .log-gold { color: gold; text-shadow: 0 0 5px gold; }
+    </style>
+</head>
+<body>
+
+    <div id="sky-layer" class="day-theme">
+        <div id="stars-div" class="stars"></div>
+        <div id="celestial-body">☀️</div>
+        <div id="cloud-container"></div>
+        <div id="weather-effects"></div>
+    </div>
+
+    <div id="center-container">
+        <h1 id="motto-text">HOŞ GELDİN</h1>
+        <p id="weather-info">Yükleniyor...</p>
+        <div id="center-timer">00:00:00</div>
+    </div>
+
+    <div id="auth-screen">
+        <div class="auth-box">
+            <h1 style="color:#3498db; margin-bottom:20px; font-size:18px;">YKS ZEN</h1>
+            <input type="text" id="username" class="auth-input" placeholder="Kullanıcı Adı">
+            <input type="password" id="password" class="auth-input" placeholder="Şifre">
+            <div style="margin-top:15px; display:flex; gap:10px;">
+                <button class="btn" onclick="window.handleAuth('login')" style="background:#27ae60; flex:1;">GİRİŞ</button>
+                <button class="btn" onclick="window.handleAuth('register')" style="background:#7f8c8d; flex:1;">KAYIT</button>
+            </div>
+            <p id="error-msg" style="color:red; margin-top:10px; font-size:8px;"></p>
+        </div>
+        <div class="secret-admin-btn" onclick="window.openAdminLogin()">🔒</div>
+    </div>
+
+    <div id="game-ui" class="hidden">
+        <div class="hud-top">
+            <div style="display:flex; align-items:center; gap: 10px;">
+                <div style="display:flex; flex-direction:column; cursor:pointer;" onclick="window.openPanel('profile')">
+                    <span id="player-name" style="color:#3498db; font-size:11px;">...</span>
+                </div>
+                <button class="btn" style="padding: 5px; background: #c0392b; margin:0;" onclick="window.logout()">🚪</button>
+                <button id="edit-sign-btn" class="btn hidden" style="padding: 5px; background: #e67e22; margin:0;" onclick="editVillageSign()">✏️</button>
+                <button id="edit-color-btn" class="btn hidden" style="padding: 5px; background: #9b59b6; margin:0;" onclick="editMottoColor()">🎨</button>
+            </div>
+            <div style="text-align: right; margin-right: 25px;"> <div style="color:gold; font-size:10px;">💰 <span id="wallet-display">0</span></div>
+            </div>
+        </div>
+
+        <div class="hud-bottom">
+            <button class="nav-btn active" onclick="window.closePanels()"><div style="font-size:20px;">🧘</div>ZEN</button>
+            <button class="nav-btn" onclick="window.openPanel('work')"><div style="font-size:20px;">⏱️</div>SAYAÇ</button>
+            <button class="nav-btn" onclick="window.openPanel('tyt')"><div style="font-size:20px;">📚</div>DERS</button>
+            <button class="nav-btn" onclick="window.openPanel('shop')"><div style="font-size:20px;">🛒</div>MARKET</button>
+            <button class="nav-btn" onclick="window.openPanel('players')"><div style="font-size:20px;">👥</div>LİSTE</button>
+        </div>
+    </div>
+
+    <div id="panel-work" class="modal hidden">
+        <div class="close-btn" onclick="window.closePanels()">×</div>
+        <h2 style="color: #3498db;">ÇALIŞMA ODASI</h2>
+        <div class="pomodoro-container">
+            <div class="pomo-left">
+                <div id="timer-circle" class="timer-circle">
+                    <div id="sw-display" style="font-size:22px;">00:00:00</div>
+                </div>
+                
+                <div id="controls-idle" class="hidden" style="display:flex; width:100%; gap:5px;">
+                    <button class="btn" onclick="window.startStopwatch()" style="background:#27ae60; flex:1;">BAŞLAT</button>
+                    <button class="btn" onclick="window.startBreak()" style="background:#3498db; flex:1;">MOLA</button>
+                </div>
+
+                <div id="controls-working" class="hidden" style="display:flex; width:100%; gap:5px;">
+                    <button class="btn" onclick="window.goToToilet()" style="background:#f1c40f; flex:1;">🚽 TUVALET</button>
+                    <button class="btn" onclick="window.stopStopwatch()" style="background:#c0392b; flex:1;">BİTİR</button>
+                </div>
+
+                <div id="controls-toilet" class="hidden" style="width:100%;">
+                    <button class="btn" onclick="window.returnFromToilet()" style="background:#2ecc71; width:100%;">DÖNDÜM</button>
+                </div>
+
+                <div id="controls-break" class="hidden" style="width:100%;">
+                    <button class="btn" onclick="window.stopStopwatch()" style="background:#e67e22; width:100%;">MOLAYI BİTİR</button>
+                </div>
+
+            </div>
+            <div class="pomo-right">
+                <div style="flex:1; overflow-y:auto; border-bottom:1px solid #333;">
+                    <h3 style="color:#00ff00; font-size:9px; border-bottom:1px solid #555; text-align:center; padding-bottom:5px;">AKTİF ÇALIŞANLAR</h3>
+                    <div id="active-workers-list"></div>
+                </div>
+                <div style="flex:1; overflow-y:auto; margin-top:5px;">
+                    <h3 style="color:#f1c40f; font-size:9px; border-bottom:1px solid #555; text-align:center; padding-bottom:5px;">MOLADAKİ İBİŞLER</h3>
+                    <div id="break-workers-list"></div>
+                </div>
+            </div>
+        </div>
+        <div style="width:90%; margin-top:20px; border-top:1px solid #333; padding-top:10px;">
+            <h3 style="font-size:9px; color:#aaa;">BUGÜNKÜ LOG</h3>
+            <table style="width:100%; font-size:8px; color:#aaa;"><tbody id="work-log-table"></tbody></table>
+        </div>
+    </div>
+
+    <div id="panel-shop" class="modal hidden">
+        <div class="close-btn" onclick="window.closePanels()">×</div>
+        <h2 style="color:gold;">MARKET</h2>
+        <div class="market-tabs">
+            <div class="m-tab active" onclick="switchMarketTab('items')">EŞYALAR</div>
+            <div class="m-tab" onclick="switchMarketTab('nametags')">ETİKETLER</div>
+        </div>
+        <div id="shop-container" style="width:90%; padding-bottom:100px;"></div>
+    </div>
+
+    <div id="panel-profile" class="modal hidden"><div class="close-btn" onclick="window.closePanels()">×</div><h2 style="color:#9b59b6;">ETİKETLERİN</h2><div id="my-tags-list" style="width:90%;"></div></div>
+    <div id="panel-players" class="modal hidden"><div class="close-btn" onclick="window.closePanels()">×</div><h2 style="color:#3498db;">HAFTALIK LİDERLİK</h2><div id="player-list-container" style="width:100%; padding-bottom:150px;"></div></div>
+    
+    <div id="panel-tyt" class="modal hidden">
+        <div class="close-btn" onclick="window.closePanels()">×</div>
+        <h2>MÜFREDAT</h2>
+        <div class="curriculum-tabs">
+            <div class="c-tab active" onclick="switchCurriculum('tyt')">TYT</div>
+            <div class="c-tab" onclick="switchCurriculum('ayt')">AYT</div>
+        </div>
+        <div id="tyt-container" style="width:95%; padding-bottom:150px;"></div>
+    </div>
+
+    <div id="admin-login-modal" class="modal hidden"><div class="close-btn" onclick="window.closePanels()">×</div><h2>ADMIN</h2><input type="text" id="admin-user" class="auth-input" placeholder="User"><input type="password" id="admin-pass" class="auth-input" placeholder="Pass"><button class="btn" onclick="window.verifyAdmin()">GİRİŞ</button></div>
+    <div id="admin-panel" class="modal hidden">
+        <div class="close-btn" onclick="window.closePanels()">×</div><h2 style="color:red;">YÖNETİCİ</h2>
+        <div id="admin-panel-content">
+            <div style="width:90%;">
+                <h3>YENİ ETİKET</h3>
+                <input id="new-tag-id" class="admin-input" placeholder="ID"> <input id="new-tag-name" class="admin-input" placeholder="İsim"> <input id="new-tag-cost" class="admin-input" placeholder="Fiyat">
+                <button class="btn" onclick="addNewNametag()">EKLE</button>
+            </div>
+            <hr>
+            <h3>MEVCUT ETİKETLER</h3>
+            <table class="admin-table"><thead><tr><th>ID</th><th>İsim</th><th>Fiyat</th><th>Sil</th></tr></thead><tbody id="admin-nametags-list"></tbody></table>
+            <hr>
+            <h3>KULLANICILAR</h3>
+            <table class="admin-table"><thead><tr><th>İsim</th><th>Altın</th><th>Sil</th></tr></thead><tbody id="admin-users-list"></tbody></table>
+        </div>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyB_eX2AGPyepy0H_pbnLtwShCgF5Sr_ETQ",
+            authDomain: "yks-koy.firebaseapp.com",
+            projectId: "yks-koy",
+            storageBucket: "yks-koy.firebasestorage.app",
+            messagingSenderId: "400949745524",
+            appId: "1:400949745524:web:f28d2bd3d408aa84bcfe21"
+        };
+
+        // DATA
+        let itemsDB = { 
+            'sign': { name: 'Motto Tabelası', cost: 5000 }, 
+            'palette': { name: 'Renk Paleti', cost: 7500 }
+        };
+        let nametagsDB = { 'tag_king': { name: '[KRAL]', cost: 10000, req: null }, 'tag_tyt': { name: '[TYT BİTTİ]', cost: 0, req: 'tyt_done' } };
+        
+        const curriculumData = {
+            tyt: { 
+                "Matematik": ["Temel Kavramlar", "Sayı Basamakları", "Bölme-Bölünebilme", "EBOB-EKOK", "Rasyonel Sayılar", "Basit Eşitsizlikler", "Mutlak Değer", "Üslü-Köklü", "Çarpanlara Ayırma", "Oran-Orantı", "Problemler", "Kümeler", "Fonksiyonlar", "Polinomlar", "Olasılık"], 
+                "Türkçe": ["Sözcükte Anlam", "Cümlede Anlam", "Paragraf", "Ses Bilgisi", "Yazım Kuralları", "Noktalama", "Sözcük Türleri", "Fiiller", "Cümlenin Öğeleri", "Cümle Türleri"],
+                "Fizik": ["Fizik Bilimine Giriş", "Madde ve Özellikleri", "Hareket", "Kuvvet", "İş, Güç, Enerji", "Isı ve Sıcaklık", "Basınç", "Kaldırma Kuvveti", "Elektrostatik", "Optik"],
+                "Kimya": ["Kimya Bilimi", "Atom ve Periyodik Sistem", "Kimyasal Türler", "Maddenin Halleri", "Doğa ve Kimya", "Kimyanın Temel Kanunları", "Karışımlar", "Asitler-Bazlar-Tuzlar", "Kimya Her Yerde"],
+                "Biyoloji": ["Canlıların Ortak Öz.", "Temel Bileşenler", "Hücre", "Sınıflandırma", "Hücre Bölünmeleri", "Kalıtım", "Ekoloji"],
+                "Tarih": ["Tarih ve Zaman", "İlk Çağ Uygarlıkları", "Orta Çağda Dünya", "İlk Türk Devletleri", "İslam Tarihi", "Türk-İslam Tarihi", "Osmanlı Kuruluş-Yükselme", "Değişim Çağında Avrupa", "Yakın Çağda Avrupa", "Milli Mücadele"],
+                "Coğrafya": ["Doğa ve İnsan", "Dünya'nın Şekli ve Hareketi", "Coğrafi Konum", "Harita Bilgisi", "İklim Bilgisi", "İç ve Dış Kuvvetler", "Nüfus", "Yerleşme", "Ekonomik Faaliyetler", "Bölgeler", "Afetler"],
+                "Felsefe": ["Felsefeye Giriş", "Bilgi Felsefesi", "Varlık Felsefesi", "Ahlak Felsefesi", "Sanat Felsefesi", "Din Felsefesi", "Siyaset Felsefesi"],
+                "Din": ["İnanç", "İbadet", "Ahlak", "Hz. Muhammed", "Vahiyo ve Akıl", "İslam ve Bilim", "Anadolu'da İslam"]
+            },
+            ayt: { 
+                "Matematik": ["Polinomlar", "2.Dereceden Denklemler", "Eşitsizlikler", "Parabol", "Trigonometri", "Logaritma", "Diziler", "Limit", "Türev", "İntegral"], 
+                "Fizik": ["Vektörler", "Bağıl Hareket", "Newton Hareket", "Atışlar", "İtme Momentum", "Tork Denge", "Elektrik", "Manyetizma", "Çembersel Hareket", "Harmonik Hareket", "Dalga Mekaniği", "Modern Fizik"],
+                "Kimya": ["Modern Atom Teorisi", "Gazlar", "Sıvı Çözeltiler", "Kimyasal Tepkimelerde Enerji", "Hız", "Denge", "Kimya ve Elektrik", "Organik Kimya"],
+                "Biyoloji": ["Sinir Sistemi", "Endokrin Sistem", "Duyu Organları", "Destek ve Hareket", "Sindirim", "Dolaşım", "Solunum", "Üriner Sistem", "Üreme", "Protein Sentezi", "Canlılık ve Enerji", "Fotosentez", "Bitki Biyolojisi"]
+            }
+        };
+
+        let globalConfig = { goldRate: 1 };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        let myUid=null, stopwatchInterval=null, userData={};
+
+        // --- AUTH ---
+        window.handleAuth = async function(type) {
+            const u = document.getElementById('username').value.trim(); const p = document.getElementById('password').value.trim();
+            if(!u || !p) return; const email = u.toLowerCase() + "@yks-koy.com";
+            try {
+                if (type === 'login') await auth.signInWithEmailAndPassword(email, p);
+                else {
+                    const c = await auth.createUserWithEmailAndPassword(email, p);
+                    await db.collection('users').doc(c.user.uid).set({ 
+                        username: u, wallet: 500, completedTopics: [], todayTime: 0, weeklyTime: 0, lastResetWeek: getWeekNumber(new Date()), lastWorkDate: new Date().toLocaleDateString('tr-TR'), 
+                        timer: {state: 'idle', startTime: 0, pauseStart: 0}, villageText: "YKS 2026", mottoColor: "#f1c40f", activeNametag: "", ownedNametags: [] 
+                    });
+                }
+            } catch (e) { document.getElementById('error-msg').innerText = "Hata!"; }
+        };
+        window.logout = function() { auth.signOut().then(() => window.location.reload()); };
+
+        auth.onAuthStateChanged(async u => {
+            if(u) {
+                myUid = u.uid;
+                const conf = await db.collection('global').doc('config').get();
+                if(conf.exists) { globalConfig = conf.data(); itemsDB = globalConfig.items || itemsDB; nametagsDB = globalConfig.nametags || nametagsDB; }
+                document.getElementById('auth-screen').classList.add('hidden'); document.getElementById('game-ui').classList.remove('hidden');
+                initZenMode(); fetchWeather();
+            } else { document.getElementById('auth-screen').classList.remove('hidden'); }
+        });
+
+        // --- ZEN MODE & RESET ---
+        function getWeekNumber(d) { d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())); d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay()||7)); var yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1)); return Math.ceil((((d - yearStart) / 86400000) + 1)/7); }
+
+        function initZenMode() {
+            createClouds();
+            db.collection('users').doc(myUid).onSnapshot(async d => {
+                if(d.exists) {
+                    userData = d.data();
+                    
+                    const today = new Date().toLocaleDateString('tr-TR');
+                    const curWeek = getWeekNumber(new Date());
+                    
+                    if(userData.lastWorkDate !== today) await db.collection('users').doc(myUid).update({ todayTime: 0, lastWorkDate: today });
+                    if(userData.lastResetWeek !== curWeek) await db.collection('users').doc(myUid).update({ weeklyTime: 0, lastResetWeek: curWeek });
+
+                    const tag = userData.activeNametag ? `<span class="nametag-display">${nametagsDB[userData.activeNametag].name}</span> ` : '';
+                    document.getElementById('player-name').innerHTML = tag + userData.username;
+                    document.getElementById('wallet-display').innerText = userData.wallet;
+                    document.getElementById('edit-sign-btn').classList.toggle('hidden', !hasItem('sign'));
+                    document.getElementById('edit-color-btn').classList.toggle('hidden', !hasItem('palette'));
+                    
+                    const mottoText = document.getElementById('motto-text');
+                    if(userData.villageText) { 
+                        mottoText.innerText = userData.villageText; 
+                        document.getElementById('center-container').classList.remove('hidden'); 
+                    }
+                    if(userData.mottoColor) mottoText.style.color = userData.mottoColor;
+                    
+                    checkStopwatch();
+                }
+            });
+        }
+        function hasItem(id) { return userData.ownedNametags && userData.ownedNametags.includes(id); }
+
+        async function fetchWeather() {
+            try {
+                const r = await fetch('https://api.open-meteo.com/v1/forecast?latitude=40.735&longitude=31.606&current_weather=true&daily=sunrise,sunset&timezone=Europe%2FIstanbul');
+                const d = await r.json();
+                document.getElementById('weather-info').innerText = `Bolu: ${d.current_weather.temperature}°C`;
+                const effects = document.getElementById('weather-effects'); effects.innerHTML = '';
+                if(d.current_weather.weathercode >= 51 && d.current_weather.weathercode <= 67) createRain(effects);
+                if(d.current_weather.weathercode >= 71 && d.current_weather.weathercode <= 86) createSnow(effects);
+                const now = new Date(); const sunrise = new Date(d.daily.sunrise[0]); const sunset = new Date(d.daily.sunset[0]);
+                updateDayNight(now >= sunrise && now < sunset);
+            } catch(e) { updateDayNight(true); }
+        }
+
+        function updateDayNight(isDay) {
+            document.getElementById('sky-layer').className = isDay ? 'day-theme' : 'night-theme';
+            document.getElementById('stars-div').classList.toggle('visible', !isDay);
+            document.getElementById('celestial-body').innerText = isDay ? '☀️' : '🌙';
+        }
+        function createRain(c) { for(let i=0; i<50; i++) { const r = document.createElement('div'); r.className='rain'; r.style.left = Math.random()*100+'vw'; r.style.animationDuration = (Math.random()*0.5 + 0.5)+'s'; c.appendChild(r); } }
+        function createSnow(c) { for(let i=0; i<50; i++) { const s = document.createElement('div'); s.className='snow'; s.style.left = Math.random()*100+'vw'; s.style.animationDuration = (Math.random()*2 + 2)+'s'; c.appendChild(s); } }
+        function createClouds() {
+            const c = document.getElementById('cloud-container');
+            setInterval(() => {
+                if(document.querySelectorAll('.cloud').length < 3) {
+                    const cl = document.createElement('div'); cl.className='cloud';
+                    cl.style.top = (Math.random()*20 + 5) + '%'; cl.style.animationDuration = (Math.random()*30 + 30) + 's';
+                    c.appendChild(cl); setTimeout(()=>cl.remove(), 60000);
+                }
+            }, 5000);
+        }
+
+        // --- TIMER STATE MACHINE ---
+        function checkStopwatch() {
+            if(stopwatchInterval) { clearInterval(stopwatchInterval); stopwatchInterval = null; }
+            
+            db.collection('users').doc(myUid).onSnapshot(doc => {
+                const d = doc.data();
+                if(!d || !d.timer) return;
+                const state = d.timer.state || 'idle';
+                const centerTimer = document.getElementById('center-timer');
+                
+                ['controls-idle', 'controls-working', 'controls-toilet', 'controls-break'].forEach(id => document.getElementById(id).classList.add('hidden'));
+                document.getElementById('timer-circle').classList.remove('timer-toilet', 'timer-break');
+                centerTimer.style.display = 'none'; centerTimer.className = '';
+
+                if (state === 'idle') {
+                    if(stopwatchInterval) { clearInterval(stopwatchInterval); stopwatchInterval = null; }
+                    document.getElementById('sw-display').innerText = "00:00:00";
+                    document.getElementById('controls-idle').classList.remove('hidden');
+                } 
+                else if (state === 'working') {
+                    document.getElementById('controls-working').classList.remove('hidden');
+                    centerTimer.style.display = 'block';
+                    if(stopwatchInterval) clearInterval(stopwatchInterval);
+                    stopwatchInterval = setInterval(()=>updateDisplay(d.timer.startTime), 1000);
+                }
+                else if (state === 'toilet') {
+                    document.getElementById('controls-toilet').classList.remove('hidden');
+                    document.getElementById('timer-circle').classList.add('timer-toilet');
+                    centerTimer.style.display = 'block'; centerTimer.classList.add('toilet-mode');
+                    
+                    if(stopwatchInterval) clearInterval(stopwatchInterval);
+                    stopwatchInterval = setInterval(() => {
+                        const passed = Date.now() - d.timer.pauseStart;
+                        const left = 600000 - passed;
+                        if(left <= 0) { window.handleToiletTimeout(d.timer.startTime, d.timer.pauseStart); } 
+                        else {
+                            const m=Math.floor(left/60000), s=Math.floor((left%60000)/1000);
+                            const str = `-${m}:${s<10?'0'+s:s}`;
+                            document.getElementById('sw-display').innerText = str;
+                            centerTimer.innerText = str;
+                        }
+                    }, 1000);
+                }
+                else if (state === 'break') {
+                    document.getElementById('sw-display').innerText = "MOLA";
+                    document.getElementById('controls-break').classList.remove('hidden');
+                    document.getElementById('timer-circle').classList.add('timer-break');
+                    centerTimer.style.display = 'block'; centerTimer.innerText = "MOLA";
+                    centerTimer.classList.add('break-mode');
+                }
+            });
+            loadActive(); loadLogs();
+        }
+
+        function updateDisplay(start) {
+            const diff = Date.now() - start;
+            const h=Math.floor(diff/3600000), m=Math.floor((diff%3600000)/60000), s=Math.floor((diff%60000)/1000);
+            const str = `${h<10?'0'+h:h}:${m<10?'0'+m:m}:${s<10?'0'+s:s}`;
+            document.getElementById('sw-display').innerText = str;
+            document.getElementById('center-timer').innerText = str;
+        }
+
+        // --- ACTIONS ---
+        window.startStopwatch = async function() { await db.collection('users').doc(myUid).update({ "timer.state": "working", "timer.startTime": Date.now() }); };
+        window.startBreak = async function() { await db.collection('users').doc(myUid).update({ "timer.state": "break", "timer.breakStart": Date.now() }); };
+        window.goToToilet = async function() { await db.collection('users').doc(myUid).update({ "timer.state": "toilet", "timer.pauseStart": Date.now() }); };
+        
+        window.returnFromToilet = async function() {
+            const d = (await db.collection('users').doc(myUid).get()).data();
+            const pauseDuration = Date.now() - d.timer.pauseStart;
+            await db.collection('users').doc(myUid).update({ "timer.state": "working", "timer.startTime": d.timer.startTime + pauseDuration });
+        };
+
+        window.handleToiletTimeout = async function(start, pauseStart) {
+            const duration = pauseStart - start;
+            const mins = Math.floor(duration / 60000);
+            await db.collection('users').doc(myUid).update({ "timer.state": "idle" });
+            
+            await db.collection('users').doc(myUid).update({
+                wallet: firebase.firestore.FieldValue.increment(Math.floor(mins * globalConfig.goldRate)),
+                weeklyTime: firebase.firestore.FieldValue.increment(duration),
+                todayTime: firebase.firestore.FieldValue.increment(duration)
+            });
+            await db.collection('users').doc(myUid).collection('logs').add({ start: start, end: pauseStart, duration: duration, note: "Timeout" });
+            alert("Tuvalet süresi doldu! Oturum kapatıldı.");
+        };
+
+        window.stopStopwatch = async function() {
+            const d = (await db.collection('users').doc(myUid).get()).data();
+            if(d.timer.state === 'break') { await db.collection('users').doc(myUid).update({ "timer.state": "idle" }); return; }
+            if(d.timer.state !== 'working') return;
+            
+            const duration = Date.now() - d.timer.startTime;
+            const mins = Math.floor(duration / 60000);
+            let mult = (duration > 7200000) ? 1.2 : 1.0;
+            let earned = Math.floor(mins * globalConfig.goldRate * mult);
+
+            await db.collection('users').doc(myUid).update({ "timer.state": "idle" });
+
+            await db.collection('users').doc(myUid).update({ 
+                wallet: firebase.firestore.FieldValue.increment(earned), 
+                weeklyTime: firebase.firestore.FieldValue.increment(duration),
+                todayTime: firebase.firestore.FieldValue.increment(duration)
+            });
+            await db.collection('users').doc(myUid).collection('logs').add({ start: d.timer.startTime, end: Date.now(), duration: duration });
+            alert(`${mins} dk çalıştın. +${earned} altın. ${mult>1?'(1.2x)':''}`);
+        };
+
+        // LISTS & UI
+        function loadActive() {
+            db.collection('users').onSnapshot(s => {
+                const activeList = document.getElementById('active-workers-list'); 
+                const breakList = document.getElementById('break-workers-list');
+                activeList.innerHTML = ''; breakList.innerHTML = '';
+                
+                s.forEach(doc => {
+                    const d = doc.data();
+                    if(d.username==='ADMIN'||d.username==='lopeinte') return;
+                    if(d.timer && d.timer.state !== 'idle') {
+                        let row = document.createElement('div');
+                        row.style.cssText = "display:flex; justify-content:space-between; font-size:8px; border-bottom:1px solid #333; padding:5px;";
+                        
+                        if(d.timer.state === 'working') {
+                            const dur = Date.now() - d.timer.startTime;
+                            let durStr = `(${Math.floor(dur/60000)} dk)`;
+                            let cl = 'color:#0f0'; let st = '(Calisiyor)';
+                            if(dur > 7200000) { cl='worker-gold'; st+=' 🔥'; }
+                            row.innerHTML = `<span style="${cl}">● ${d.username} ${durStr}</span><span>${st}</span>`;
+                            activeList.appendChild(row);
+                        } 
+                        else if (d.timer.state === 'toilet') {
+                            row.innerHTML = `<span style="color:#e74c3c">● ${d.username}</span><span>(Tuvalette)</span>`;
+                            activeList.appendChild(row);
+                        }
+                        else if (d.timer.state === 'break') {
+                            row.innerHTML = `<span style="color:#3498db">● ${d.username}</span><span>(İBİŞ)</span>`;
+                            breakList.appendChild(row);
+                        }
+                    }
+                });
+            });
+        }
+
+        function loadLogs() {
+            db.collection('users').doc(myUid).collection('logs').orderBy('end', 'desc').limit(10).onSnapshot(s => {
+                const t = document.getElementById('work-log-table'); t.innerHTML = '';
+                s.forEach(doc => {
+                    const d=doc.data(); const m=Math.floor(d.duration/60000);
+                    let c='log-dim'; if(m>60) c='log-bright'; if(m>120) c='log-gold';
+                    t.innerHTML += `<tr><td style="color:#aaa">${new Date(d.start).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}-${new Date(d.end).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}</td><td class="${c}" style="text-align:right">${m} dk</td></tr>`;
+                });
+            });
+        }
+
+        // --- MARKET & PANELS ---
+        window.openPanel = function(p) { 
+            window.closePanels(); 
+            document.getElementById('panel-'+p).classList.remove('hidden'); 
+            document.getElementById('center-container').classList.add('hidden');
+            if(p==='shop') switchMarketTab('items'); 
+            else if(p==='players') loadRanking(); 
+            else if(p==='profile') renderMyTags(); 
+            else if(p==='tyt') renderCurriculum('tyt'); 
+        };
+        window.closePanels = function() { 
+            document.querySelectorAll('.modal').forEach(e=>e.classList.add('hidden')); 
+            document.getElementById('center-container').classList.remove('hidden');
+        };
+
+        window.switchMarketTab = function(tab) {
+            const c = document.getElementById('shop-container'); c.innerHTML = '';
+            document.querySelectorAll('.m-tab').forEach(t => t.classList.remove('active')); event.target.classList.add('active');
+            if(tab === 'items') {
+                Object.entries(itemsDB).forEach(([k,v]) => {
+                    let owned = hasItem(k);
+                    let btnHTML = owned ? `<button class="btn owned-item">SATIN ALINDI</button>` : `<button class="btn" onclick="window.buyItem('${k}', ${v.cost})">AL</button>`;
+                    c.innerHTML += `<div class="${owned?'locked-item':''}" style="display:flex; justify-content:space-between; background:#222; padding:10px; margin-bottom:5px; border:1px solid #444;"><span>${v.name}</span> <span style="color:${owned?'#2ecc71':'gold'}">${owned?'':v.cost+' G'}</span> ${btnHTML}</div>`;
+                });
+            } else {
+                Object.entries(nametagsDB).forEach(([k,v]) => {
+                    let locked = (v.req === 'tyt_done' && userData.completedTopics.length < 20);
+                    let owned = hasItem(k);
+                    let btnHTML = owned ? `<button class="btn owned-item">SATIN ALINDI</button>` : `<button class="btn" onclick="window.buyNametag('${k}', ${v.cost})">AL</button>`;
+                    c.innerHTML += `<div class="${(locked||owned)?'locked-item':''}" style="display:flex; justify-content:space-between; background:#222; padding:10px; margin-bottom:5px; border:1px solid #444;"><span>${v.name}</span> <span style="color:${owned?'#2ecc71':'gold'}">${owned?'':v.cost+' G'}</span> ${btnHTML}</div>`;
+                });
+            }
+        };
+
+        window.buyItem = async function(id, cost) {
+            if(userData.wallet < cost) return alert("Para yok");
+            await db.collection('users').doc(myUid).update({ wallet: firebase.firestore.FieldValue.increment(-cost), ownedNametags: firebase.firestore.FieldValue.arrayUnion(id) }); alert("Alındı!");
+        };
+        window.buyNametag = async function(id, cost) {
+            if(userData.wallet < cost) return alert("Para yok");
+            await db.collection('users').doc(myUid).update({ wallet: firebase.firestore.FieldValue.increment(-cost), ownedNametags: firebase.firestore.FieldValue.arrayUnion(id), activeNametag: id }); alert("Kuşanıldı!");
+        };
+        window.editVillageSign = async function() { const t = prompt("Motto:"); if(t) await db.collection('users').doc(myUid).update({ villageText: t }); };
+        window.editMottoColor = async function() { const c = prompt("Renk Kodu (örn: #ff0000):"); if(c) await db.collection('users').doc(myUid).update({ mottoColor: c }); };
+
+        // --- ADMIN ---
+        window.openAdminLogin = function() { window.closePanels(); document.getElementById('admin-login-modal').classList.remove('hidden'); };
+        window.verifyAdmin = function() { if(document.getElementById('admin-user').value==='lopeinte'&&document.getElementById('admin-pass').value==='enes14enes'){ document.getElementById('admin-login-modal').classList.add('hidden'); openAdminPanel(); } };
+        async function openAdminPanel() {
+            document.getElementById('admin-panel').classList.remove('hidden');
+            const ntList = document.getElementById('admin-nametags-list'); ntList.innerHTML = '';
+            Object.entries(nametagsDB).forEach(([k,v]) => {
+                ntList.innerHTML += `<tr><td>${k}</td><td>${v.name}</td><td>${v.cost}</td><td><button style="background:red; color:white;" onclick="deleteNametag('${k}')">SIL</button></td></tr>`;
+            });
+            const uList = document.getElementById('admin-users-list'); uList.innerHTML = '';
+            (await db.collection('users').get()).forEach(d => {
+                const dd = d.data(); uList.innerHTML += `<tr><td>${dd.username}</td><td>${dd.wallet}</td><td><button style="background:red; color:white;" onclick="deleteUser('${d.id}')">SIL</button></td></tr>`;
+            });
+        }
+        window.addNewNametag = async function() {
+            const id=document.getElementById('new-tag-id').value; const n=document.getElementById('new-tag-name').value; const c=parseInt(document.getElementById('new-tag-cost').value);
+            nametagsDB[id] = {name:n, cost:c, req:null}; await db.collection('global').doc('config').set({nametags:nametagsDB}, {merge:true}); alert("Eklendi"); openAdminPanel();
+        };
+        window.deleteNametag = async function(id) { delete nametagsDB[id]; await db.collection('global').doc('config').set({nametags:nametagsDB}, {merge:true}); alert("Silindi"); openAdminPanel(); };
+        
+        window.deleteUser = async function(uid) {
+            if(!confirm("Emin misin? Tüm veriler silinecek!")) return;
+            const logs = await db.collection('users').doc(uid).collection('logs').get();
+            const batch = db.batch(); logs.forEach(doc => batch.delete(doc.ref)); await batch.commit();
+            await db.collection('users').doc(uid).delete(); alert("Kullanıcı silindi."); openAdminPanel();
+        };
+
+        // --- TYT & OTHERS ---
+        window.switchCurriculum = function(type) {
+            document.querySelectorAll('.c-tab').forEach(t => t.classList.remove('active')); event.target.classList.add('active'); renderCurriculum(type);
+        };
+        window.renderCurriculum = function(type) {
+            const c = document.getElementById('tyt-container'); c.innerHTML = '';
+            for(const [lesson, topics] of Object.entries(curriculumData[type])) {
+                let html = `<div class="tyt-header" onclick="this.nextElementSibling.classList.toggle('open')">${lesson} ▼</div><div class="tyt-topics">`;
+                topics.forEach(t => { html += `<div class="topic-item"><input type="checkbox" ${userData.completedTopics.includes(t)?'checked':''} onchange="window.toggleTopic('${t}')"> ${t}</div>`; });
+                c.innerHTML += html + '</div>';
+            }
+        };
+        window.toggleTopic = async function(t) {
+            if(userData.completedTopics.includes(t)) await db.collection('users').doc(myUid).update({ completedTopics: firebase.firestore.FieldValue.arrayRemove(t) });
+            else await db.collection('users').doc(myUid).update({ completedTopics: firebase.firestore.FieldValue.arrayUnion(t) });
+        };
+        function renderMyTags() {
+            const c = document.getElementById('my-tags-list'); c.innerHTML = '';
+            (userData.ownedNametags||[]).forEach(id => { if(nametagsDB[id]) c.innerHTML += `<div style="border:1px solid #444; padding:10px; margin:5px; display:flex; justify-content:space-between;"><span>${nametagsDB[id].name}</span> <button class="btn" onclick="equipTag('${id}')">TAK</button></div>`; });
+            c.innerHTML += `<button class="btn" style="background:#c0392b; width:100%; margin-top:10px;" onclick="equipTag('')">ÇIKAR</button>`;
+        }
+        window.equipTag = async function(id) { await db.collection('users').doc(myUid).update({ activeNametag: id }); alert("Tamam."); };
+        function loadRanking() {
+            db.collection('users').get().then(s => {
+                const l = document.getElementById('player-list-container'); l.innerHTML = '';
+                let u = []; s.forEach(d => { if(d.data().username!=='ADMIN') u.push(d.data()); });
+                u.sort((a,b) => b.weeklyTime - a.weeklyTime); // WEEKLY SORT
+                u.forEach((x,i) => { l.innerHTML += `<div class="leaderboard-row"><div>${i<2?'🥇':''} ${x.activeNametag?nametagsDB[x.activeNametag].name:''} ${x.username}</div><div class="glowing-time">${Math.floor(x.weeklyTime/60000)} dk</div></div>`; });
+            });
+        }
+        window.toggleEditMode = function() {}; 
+    </script>
+</body>
+</html>
