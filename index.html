@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>YKS Zen V16 (Clean)</title>
+    <title>YKS Zen V18 (Time Set Fix)</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@700&display=swap" rel="stylesheet">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -71,20 +71,13 @@
         #decor-left { top: 55%; left: 10%; transform: translateY(-50%); }
         #decor-right { top: 55%; right: 10%; transform: translateY(-50%); }
 
-        /* NOTIFICATION BOX (BİLDİRİM KUTUSU) */
+        /* NOTIFICATION BOX */
         #pixel-notif-box {
-            position: fixed;
-            bottom: 80px; /* HUD üstü */
-            left: 10px;
-            background: rgba(0, 0, 0, 0.8);
-            border: 2px solid #fff;
-            padding: 10px;
-            color: #0f0;
-            font-size: 9px;
-            z-index: 5000;
-            display: none;
-            animation: slideIn 0.5s ease;
-            box-shadow: 5px 5px 0px rgba(0,0,0,0.5);
+            position: fixed; bottom: 80px; left: 10px;
+            background: rgba(0, 0, 0, 0.8); border: 2px solid #fff;
+            padding: 10px; color: #0f0; font-size: 9px;
+            z-index: 5000; display: none;
+            animation: slideIn 0.5s ease; box-shadow: 5px 5px 0px rgba(0,0,0,0.5);
         }
         @keyframes slideIn { from { transform: translateX(-100%); } to { transform: translateX(0); } }
 
@@ -331,10 +324,10 @@
                 <button class="btn" style="background:red" onclick="punishUser()">CEZA VER</button>
             </div>
             <hr>
-            <h3>DAKİKA YÖNETİMİ</h3>
+            <h3>SÜRE AYARLA (DÜZELTME)</h3>
             <select id="time-user-select" class="admin-select"></select>
-            <input id="time-amount" class="admin-input" placeholder="+/- Dakika"> 
-            <button class="btn" onclick="modifyUserTime()">UYGULA</button>
+            <input id="time-amount" class="admin-input" placeholder="Net Dakika (Örn: 120)"> 
+            <button class="btn" onclick="modifyUserTime()">AYARLA</button>
             <hr>
             <h3>KULLANICILAR</h3>
             <table class="admin-table"><thead><tr><th>İsim</th><th>Altın</th><th>Sil</th></tr></thead><tbody id="admin-users-list"></tbody></table>
@@ -460,9 +453,13 @@
                     const tag = userData.activeNametag ? `<span class="nametag-display" style="color:${nametagsDB[userData.activeNametag]?.color||'gold'}; border-color:${nametagsDB[userData.activeNametag]?.color||'gold'}">${nametagsDB[userData.activeNametag]?.name||''}</span> ` : '';
                     document.getElementById('player-name').innerHTML = tag + userData.username;
                     document.getElementById('wallet-display').innerText = userData.wallet;
+                    
+                    // FIX: Decor button visibility check
+                    let hasDecor = (userData.ownedNametags||[]).some(id => itemsDB[id] && itemsDB[id].type === 'decor');
+                    
                     document.getElementById('edit-sign-btn').classList.toggle('hidden', !hasItem('sign'));
                     document.getElementById('edit-color-btn').classList.toggle('hidden', !hasItem('palette'));
-                    document.getElementById('edit-decor-btn').classList.toggle('hidden', !hasItem('sign')); 
+                    document.getElementById('edit-decor-btn').classList.toggle('hidden', !hasDecor); 
 
                     const mottoText = document.getElementById('motto-text');
                     if(userData.villageText) { mottoText.innerText = userData.villageText; document.getElementById('center-container').classList.remove('hidden'); }
@@ -603,6 +600,8 @@
             const mins = Math.floor(duration / 60000);
             let mult = (duration > 7200000) ? 1.2 : 1.0;
             let earned = Math.floor(mins * globalConfig.goldRate * mult);
+            
+            // FIX: Market Lock Logic - Update Local Array Immediately
             await db.collection('users').doc(myUid).update({ "timer.state": "idle" });
             await db.collection('users').doc(myUid).update({ 
                 wallet: firebase.firestore.FieldValue.increment(earned), 
@@ -686,11 +685,18 @@
                 isFirstLoad = false; // İlk yükleme bitti, artık bildirim gönderebilir
             });
         }
+        
+        // FIX: DAILY LOG FILTER
         function loadLogs() { 
-            db.collection('users').doc(myUid).collection('logs').orderBy('end', 'desc').limit(10).onSnapshot(s => {
+            db.collection('users').doc(myUid).collection('logs').orderBy('end', 'desc').limit(20).onSnapshot(s => {
                 const t = document.getElementById('work-log-table'); t.innerHTML = '';
+                const startOfDay = new Date(); startOfDay.setHours(0,0,0,0); // Bugünün başlangıcı
+                
                 s.forEach(doc => {
-                    const d=doc.data(); const m=Math.floor(d.duration/60000);
+                    const d=doc.data(); 
+                    if(d.end < startOfDay.getTime()) return; // Bugünden eskileri atla
+
+                    const m=Math.floor(d.duration/60000);
                     let c='log-dim'; if(m>60) c='log-bright'; if(m>120) c='log-gold';
                     t.innerHTML += `<tr><td style="color:#aaa">${new Date(d.start).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}-${new Date(d.end).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}</td><td class="${c}" style="text-align:right">${m} dk</td></tr>`;
                 });
@@ -715,9 +721,27 @@
                 c.innerHTML += `<div class="${owned?'locked-item':''}" style="display:flex; justify-content:space-between; align-items:center; background:#222; padding:10px; margin-bottom:5px; border:1px solid #444;"><span>${imgHTML}${v.name}</span> <span style="color:${owned?'#2ecc71':'gold'}">${owned?'':v.cost+' G'}</span> ${btnHTML}</div>`;
             });
         };
+        
+        // FIX: MARKET LOCK
         window.buyItem = async function(id, cost) {
             if(userData.wallet < cost) return alert("Para yok");
-            await db.collection('users').doc(myUid).update({ wallet: firebase.firestore.FieldValue.increment(-cost), ownedNametags: firebase.firestore.FieldValue.arrayUnion(id) }); alert("Alındı!");
+            // 1. Local Update (Hemen kilitlensin)
+            if(!userData.ownedNametags) userData.ownedNametags = [];
+            userData.ownedNametags.push(id);
+            userData.wallet -= cost;
+            
+            // 2. Re-render Current Tab (Butonu güncelle)
+            const currentTab = document.querySelector('.m-tab.active').innerText;
+            if(currentTab === 'EŞYALAR') switchMarketTab('items');
+            else if(currentTab === 'DEKOR') switchMarketTab('decor');
+            else switchMarketTab('nametags');
+
+            // 3. Database Update
+            await db.collection('users').doc(myUid).update({ 
+                wallet: firebase.firestore.FieldValue.increment(-cost), 
+                ownedNametags: firebase.firestore.FieldValue.arrayUnion(id) 
+            }); 
+            alert("Alındı!");
         };
 
         // --- ADMIN ---
@@ -726,8 +750,6 @@
         
         async function openAdminPanel() {
             document.getElementById('admin-panel').classList.remove('hidden');
-            
-            // Failsafe execution
             try { await loadAdminDropdowns(); } catch(e){ console.log(e); }
             try { renderAdminMarketItems(); } catch(e){ console.log(e); }
             try { renderUserList(); } catch(e){ console.log(e); }
@@ -742,14 +764,12 @@
         }
 
         async function loadAdminDropdowns() {
-            // Users
             const usersSnap = await db.collection('users').get();
             let userOpts = "";
             usersSnap.forEach(doc => { userOpts += `<option value="${doc.id}">${doc.data().username}</option>`; });
             document.getElementById('punish-user-select').innerHTML = userOpts;
             document.getElementById('time-user-select').innerHTML = userOpts;
 
-            // Tags (Also for delete)
             let tagOpts = "";
             Object.entries(nametagsDB).forEach(([k,v]) => { tagOpts += `<option value="${k}">${v.name}</option>`; });
             document.getElementById('tag-id-select').innerHTML = tagOpts;
@@ -815,11 +835,27 @@
             });
             alert("Cezalandırıldı!");
         };
+        
+        // FIX: TIME SET LOGIC
         window.modifyUserTime = async function() {
             let targetUid = document.getElementById('time-user-select').value;
-            let amount = parseInt(document.getElementById('time-amount').value);
-            await db.collection('users').doc(targetUid).update({ weeklyTime: firebase.firestore.FieldValue.increment(amount * 60000) });
-            alert("Süre güncellendi");
+            let minutes = parseInt(document.getElementById('time-amount').value);
+
+            if (isNaN(minutes) || minutes < 0) {
+                alert("Lütfen geçerli bir dakika gir!");
+                return;
+            }
+
+            let newWeeklyTime = minutes * 60000;
+
+            try {
+                await db.collection('users').doc(targetUid).update({
+                    weeklyTime: newWeeklyTime
+                });
+                alert("Kullanıcının süresi " + minutes + " dakika olarak ayarlandı.");
+            } catch (error) {
+                alert("Hata: " + error.message);
+            }
         };
         
         window.addNewNametag = async function() {
