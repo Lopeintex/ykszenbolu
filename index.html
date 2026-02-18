@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>YKS Zen Ultimate Fix</title>
+    <title>YKS Zen V16 (Clean)</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@700&display=swap" rel="stylesheet">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -16,7 +16,7 @@
     <style>
         body { margin: 0; padding: 0; overflow: hidden; background: #000; color: #fff; font-family: 'Press Start 2P', cursive; font-size: 10px; user-select: none; }
 
-        /* --- ATMOSFER (ARKA PLAN) --- */
+        /* ATMOSFER */
         #sky-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -10; transition: background 2s ease; }
         .day-theme { background: linear-gradient(to bottom, #4facfe 0%, #00f2fe 100%); }
         .night-theme { background: linear-gradient(to bottom, #0f2027 0%, #203a43 50%, #2c5364 100%); }
@@ -31,7 +31,7 @@
         }
         @keyframes floatCloud { from { transform: translateX(-200px); } to { transform: translateX(110vw); } }
 
-        /* YILDIZLAR (Tepeden Başlar, Aşağı Silinir) */
+        /* YILDIZLAR */
         .stars { 
             position: fixed; top: 0; left:0; width:100%; height:60%; 
             background-image: radial-gradient(white 1px, transparent 1px); 
@@ -47,7 +47,7 @@
         .snow { position: absolute; width: 4px; height: 4px; background: white; border-radius: 50%; animation: fall 3s linear infinite; }
         @keyframes fall { to { transform: translateY(110vh); } }
 
-        /* --- MERKEZ ODAK --- */
+        /* MERKEZ */
         #center-container {
             position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%);
             text-align: center; width: 90%; z-index: 0;
@@ -63,12 +63,32 @@
             display: none; text-shadow: 0 0 20px rgba(52, 152, 219, 0.8);
         }
         .break-mode { color: #3498db !important; text-shadow: 0 0 20px #2980b9 !important; }
-        
-        /* TUVALET MODU STİLLERİ */
         .toilet-mode { color: #e74c3c !important; text-shadow: 0 0 20px #c0392b !important; animation: pulse 1.5s infinite; }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
-        /* --- UI & PANELS --- */
+        /* DEKORASYON SLOTLARI */
+        .decor-slot { position: absolute; width: 100px; height: 100px; background-size: contain; background-repeat: no-repeat; background-position: center; z-index: -1; transition: all 0.3s; }
+        #decor-left { top: 55%; left: 10%; transform: translateY(-50%); }
+        #decor-right { top: 55%; right: 10%; transform: translateY(-50%); }
+
+        /* NOTIFICATION BOX (BİLDİRİM KUTUSU) */
+        #pixel-notif-box {
+            position: fixed;
+            bottom: 80px; /* HUD üstü */
+            left: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #fff;
+            padding: 10px;
+            color: #0f0;
+            font-size: 9px;
+            z-index: 5000;
+            display: none;
+            animation: slideIn 0.5s ease;
+            box-shadow: 5px 5px 0px rgba(0,0,0,0.5);
+        }
+        @keyframes slideIn { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+
+        /* UI */
         .hud-top { position: fixed; top: 0; width: 100%; height: 60px; padding: 0 15px; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.4); backdrop-filter: blur(5px); border-bottom: 1px solid rgba(255,255,255,0.1); z-index: 1000; }
         .hud-bottom { position: fixed; bottom: 0; width: 100%; height: 75px; background: #111; display: flex; border-top: 2px solid #555; overflow-x: auto; z-index: 1000;}
         .nav-btn { flex: 1; min-width: 65px; background: none; border: none; color: #777; font-family: inherit; font-size: 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; }
@@ -77,7 +97,7 @@
         /* MODALS */
         .modal { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(10, 10, 10, 0.85); backdrop-filter: blur(8px);
+            background: rgba(10, 10, 10, 0.9); backdrop-filter: blur(10px);
             z-index: 3000; display: flex; flex-direction: column; align-items: center; 
             padding-top: 70px; overflow-y: auto; -webkit-overflow-scrolling: touch;
         }
@@ -85,18 +105,9 @@
         .btn { background: #e67e22; color: #fff; border: 2px solid #fff; padding: 10px; font-family: inherit; cursor: pointer; margin: 5px; font-size: 8px;}
         .close-btn { position: fixed; top: 15px; right: 15px; width: 40px; height: 40px; background: #c0392b; color: white; border: 2px solid white; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; z-index: 4500; border-radius: 8px; }
 
-        /* GİRİŞ EKRANI */
-        #auth-screen { 
-            position: fixed; top:0; left:0; width:100%; height:100%; z-index:9999; 
-            display:flex; align-items:center; justify-content:center; flex-direction: column; 
-            background: transparent; 
-        }
-        .auth-box { 
-            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(15px);
-            padding: 30px; border: 1px solid rgba(255,255,255,0.2); 
-            border-radius: 15px; text-align: center; width: 85%; max-width: 350px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
+        /* GİRİŞ */
+        #auth-screen { position: fixed; top:0; left:0; width:100%; height:100%; z-index:9999; display:flex; align-items:center; justify-content:center; flex-direction: column; background: transparent; }
+        .auth-box { background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(15px); padding: 30px; border: 1px solid rgba(255,255,255,0.2); border-radius: 15px; text-align: center; width: 85%; max-width: 350px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .auth-input { width: 90%; padding: 15px; margin: 10px 0; background: rgba(0,0,0,0.5); border: 1px solid #555; color: #fff; font-family: inherit; font-size: 10px; text-align: center; border-radius: 5px; }
         .secret-admin-btn { position: absolute; bottom: 15px; right: 15px; font-size: 30px; opacity: 0.1; cursor: pointer; color: #fff; z-index: 10000; }
 
@@ -104,10 +115,8 @@
         .market-tabs { display: flex; width: 90%; justify-content: space-around; margin-bottom: 10px; }
         .m-tab { background: #333; border: 1px solid #555; padding: 10px; flex: 1; text-align: center; cursor: pointer; }
         .m-tab.active { background: #e67e22; color: #fff; border-color: #fff; }
-        
         .locked-item { opacity: 0.6; pointer-events: none; filter: grayscale(100%); position: relative; border-color: #555 !important; }
         .locked-item::after { content: '🔒'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 24px; text-shadow: 0 0 5px black; }
-        
         .owned-item { opacity: 0.5; pointer-events: none; border-color: #27ae60 !important; background: #0f351e !important; }
         #shop-container { width: 90%; padding-bottom: 150px; }
 
@@ -137,13 +146,19 @@
         /* ADMIN */
         .admin-table { width: 98%; border-collapse: collapse; font-size: 8px; margin-top:10px; }
         .admin-table th { background: #c0392b; padding: 5px; } .admin-table td { border: 1px solid #444; padding: 5px; }
-        .admin-input { background: #000; color: #0f0; border: 1px solid #555; padding: 5px; width: 60px; font-family: inherit; }
+        .admin-input { background: #222; color: #fff; border: 1px solid #555; padding: 5px; width: 60px; font-family: inherit; margin: 2px; }
+        .admin-select { background: #222; color: #fff; border: 1px solid #555; padding: 5px; width: 100%; font-family: inherit; margin-bottom: 5px; }
         #admin-panel-content { width: 100%; padding-bottom: 150px; }
         
         .log-dim { color: #555; } .log-bright { color: #ccc; } .log-gold { color: gold; text-shadow: 0 0 5px gold; }
     </style>
 </head>
 <body>
+
+    <div id="decor-left" class="decor-slot"></div>
+    <div id="decor-right" class="decor-slot"></div>
+    
+    <div id="pixel-notif-box"></div>
 
     <div id="sky-layer" class="day-theme">
         <div id="stars-div" class="stars"></div>
@@ -181,8 +196,10 @@
                 <button class="btn" style="padding: 5px; background: #c0392b; margin:0;" onclick="window.logout()">🚪</button>
                 <button id="edit-sign-btn" class="btn hidden" style="padding: 5px; background: #e67e22; margin:0;" onclick="editVillageSign()">✏️</button>
                 <button id="edit-color-btn" class="btn hidden" style="padding: 5px; background: #9b59b6; margin:0;" onclick="editMottoColor()">🎨</button>
+                <button id="edit-decor-btn" class="btn hidden" style="padding: 5px; background: #8e44ad; margin:0;" onclick="openDecorMenu()">📦</button>
             </div>
-            <div style="text-align: right; margin-right: 25px;"> <div style="color:gold; font-size:10px;">💰 <span id="wallet-display">0</span></div>
+            <div style="text-align: right; margin-right: 25px;">
+                <div style="color:gold; font-size:10px;">💰 <span id="wallet-display">0</span></div>
             </div>
         </div>
 
@@ -245,6 +262,7 @@
         <h2 style="color:gold;">MARKET</h2>
         <div class="market-tabs">
             <div class="m-tab active" onclick="switchMarketTab('items')">EŞYALAR</div>
+            <div class="m-tab" onclick="switchMarketTab('decor')">DEKOR</div>
             <div class="m-tab" onclick="switchMarketTab('nametags')">ETİKETLER</div>
         </div>
         <div id="shop-container" style="width:90%; padding-bottom:100px;"></div>
@@ -263,18 +281,60 @@
         <div id="tyt-container" style="width:95%; padding-bottom:150px;"></div>
     </div>
 
+    <div id="panel-decor-select" class="modal hidden">
+        <div class="close-btn" onclick="window.closePanels()">×</div>
+        <h2>YERLEŞTİR</h2>
+        <div style="display:flex; gap:10px; margin-bottom:20px;">
+            <button class="btn" onclick="setDecorTarget('left')">SOLA KOY</button>
+            <button class="btn" onclick="setDecorTarget('right')">SAĞA KOY</button>
+        </div>
+        <div id="my-decor-list" style="width:90%; display:flex; flex-wrap:wrap; gap:10px; justify-content:center;"></div>
+    </div>
+
     <div id="admin-login-modal" class="modal hidden"><div class="close-btn" onclick="window.closePanels()">×</div><h2>ADMIN</h2><input type="text" id="admin-user" class="auth-input" placeholder="User"><input type="password" id="admin-pass" class="auth-input" placeholder="Pass"><button class="btn" onclick="window.verifyAdmin()">GİRİŞ</button></div>
+    
     <div id="admin-panel" class="modal hidden">
         <div class="close-btn" onclick="window.closePanels()">×</div><h2 style="color:red;">YÖNETİCİ</h2>
         <div id="admin-panel-content">
             <div style="width:90%;">
+                <h3>GENEL AYARLAR</h3>
+                Altın Çarpanı: <input id="admin-gold-rate" class="admin-input" placeholder="1"> <button class="btn" onclick="updateGoldRate()">OK</button>
+                
+                <hr>
+                <h3>MARKET FİYATLARI</h3>
+                <div id="admin-market-list" style="max-height:150px; overflow-y:auto; border:1px solid #444; padding:5px; margin-bottom:10px;"></div>
+
+                <hr>
                 <h3>YENİ ETİKET</h3>
                 <input id="new-tag-id" class="admin-input" placeholder="ID"> <input id="new-tag-name" class="admin-input" placeholder="İsim"> <input id="new-tag-cost" class="admin-input" placeholder="Fiyat">
                 <button class="btn" onclick="addNewNametag()">EKLE</button>
+                
+                <hr>
+                <h3>ETİKET SİL</h3>
+                <div style="display:flex; gap:5px;">
+                    <select id="delete-tag-select" class="admin-select"></select>
+                    <button class="btn" style="background:red" onclick="deleteTagFromSelect()">SİL</button>
+                </div>
+
+                <hr>
+                <h3>ETİKET RENK DÜZENLE</h3>
+                <select id="tag-id-select" class="admin-select"></select>
+                <input id="tag-color-edit" class="admin-input" placeholder="Hex (#ff0)" style="width:100px"> 
+                <button class="btn" onclick="editTagColor()">DEĞİŞTİR</button>
+                
+                <hr>
+                <h3>CEZA SİSTEMİ</h3>
+                <select id="punish-user-select" class="admin-select"></select>
+                <input id="punish-tag" class="admin-input" placeholder="Tag (İbiş)"> 
+                <input id="punish-color" class="admin-input" placeholder="Renk (#ccc)"> 
+                <input id="punish-days" class="admin-input" placeholder="Gün">
+                <button class="btn" style="background:red" onclick="punishUser()">CEZA VER</button>
             </div>
             <hr>
-            <h3>MEVCUT ETİKETLER</h3>
-            <table class="admin-table"><thead><tr><th>ID</th><th>İsim</th><th>Fiyat</th><th>Sil</th></tr></thead><tbody id="admin-nametags-list"></tbody></table>
+            <h3>DAKİKA YÖNETİMİ</h3>
+            <select id="time-user-select" class="admin-select"></select>
+            <input id="time-amount" class="admin-input" placeholder="+/- Dakika"> 
+            <button class="btn" onclick="modifyUserTime()">UYGULA</button>
             <hr>
             <h3>KULLANICILAR</h3>
             <table class="admin-table"><thead><tr><th>İsim</th><th>Altın</th><th>Sil</th></tr></thead><tbody id="admin-users-list"></tbody></table>
@@ -293,10 +353,20 @@
 
         // DATA
         let itemsDB = { 
-            'sign': { name: 'Motto Tabelası', cost: 5000 }, 
-            'palette': { name: 'Renk Paleti', cost: 7500 }
+            'sign': { name: 'Motto Tabelası', cost: 5000, type: 'tool' }, 
+            'palette': { name: 'Renk Paleti', cost: 7500, type: 'tool' },
+            'fb_flag': { name: 'Fenerbahçe Logosu', cost: 2000, type: 'decor', img: 'https://i.ibb.co/TBmxNDvY/fenerlogo.png' },
+            'gs_flag': { name: 'Galatasaray Logosu', cost: 2000, type: 'decor', img: 'https://i.ibb.co/kVF18HYz/gslogo.png' },
+            'bjk_flag': { name: 'Beşiktaş Logosu', cost: 2000, type: 'decor', img: 'https://i.ibb.co/xKXmm6yc/be-ta-logo.png" ' },
+            'coffee': { name: 'Türk Kahvesi', cost: 500, type: 'decor', img: 'https://i.ibb.co/1Jryn7bj/tklogo.png' },
+            'probis': { name: 'Probis', cost: 300, type: 'decor', img: 'https://i.ibb.co/LXk6c0xd/probislogo.png' },
+            'icardi': { name: 'İcardi Forması', cost: 5000, type: 'decor', img: 'https://cdn-icons-png.flaticon.com/512/1760/1760959.png' },
+            'osimhen': { name: 'Osimhen Forması', cost: 5000, type: 'decor', img: 'https://i.ibb.co/Nz856Fc/unnamed-removebg-preview.png' },
+            'fener1': { name: 'Fener Çubuklu', cost: 4000, type: 'decor', img: 'https://cdn-icons-png.flaticon.com/512/1760/1760959.png' },
+            'fener2': { name: 'Fener Gold', cost: 4000, type: 'decor', img: 'https://cdn-icons-png.flaticon.com/512/1760/1760959.png' },
+            'ataturk': { name: 'Atatürk Portresi', cost: 10000, type: 'decor', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Kemal_Atat%C3%BCrk_%281923%29.jpg/800px-Kemal_Atat%C3%BCrk_%281923%29.jpg' }
         };
-        let nametagsDB = { 'tag_king': { name: '[KRAL]', cost: 10000, req: null }, 'tag_tyt': { name: '[TYT BİTTİ]', cost: 0, req: 'tyt_done' } };
+        let nametagsDB = { 'tag_king': { name: '[KRAL]', cost: 10000, req: null, color: 'gold' }, 'tag_tyt': { name: '[TYT BİTTİ]', cost: 0, req: 'tyt_done', color: '#3498db' } };
         
         const curriculumData = {
             tyt: { 
@@ -322,7 +392,8 @@
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
-        let myUid=null, stopwatchInterval=null, userData={};
+        let myUid=null, stopwatchInterval=null, userData={}, decorTarget=null;
+        let lastBreakStates = {}; let isFirstLoad = true;
 
         // --- AUTH ---
         window.handleAuth = async function(type) {
@@ -334,24 +405,40 @@
                     const c = await auth.createUserWithEmailAndPassword(email, p);
                     await db.collection('users').doc(c.user.uid).set({ 
                         username: u, wallet: 500, completedTopics: [], todayTime: 0, weeklyTime: 0, lastResetWeek: getWeekNumber(new Date()), lastWorkDate: new Date().toLocaleDateString('tr-TR'), 
-                        timer: {state: 'idle', startTime: 0, pauseStart: 0}, villageText: "YKS 2026", mottoColor: "#f1c40f", activeNametag: "", ownedNametags: [] 
+                        timer: {state: 'idle', startTime: 0, pauseStart: 0}, villageText: "YKS 2026", mottoColor: "#f1c40f", activeNametag: "", ownedNametags: [], decors: {left:null, right:null} 
                     });
                 }
-            } catch (e) { document.getElementById('error-msg').innerText = "Hata!"; }
+            } catch (e) { 
+                if(e.code === 'auth/email-already-in-use') alert("İsim zaten var! GİRİŞ yap.");
+                else document.getElementById('error-msg').innerText = "Hata: " + e.message; 
+            }
         };
         window.logout = function() { auth.signOut().then(() => window.location.reload()); };
 
         auth.onAuthStateChanged(async u => {
             if(u) {
                 myUid = u.uid;
+                const docCheck = await db.collection('users').doc(myUid).get();
+                if(!docCheck.exists) { 
+                    const recoveredUsername = u.email.split('@')[0]; 
+                    await db.collection('users').doc(myUid).set({ 
+                        username: recoveredUsername, wallet: 500, completedTopics: [], todayTime: 0, weeklyTime: 0, 
+                        lastResetWeek: getWeekNumber(new Date()), lastWorkDate: new Date().toLocaleDateString('tr-TR'), 
+                        timer: {state: 'idle', startTime: 0, breakStart: 0}, villageText: "YKS 2026", mottoColor: "#f1c40f", activeNametag: "", ownedNametags: [], decors: {left:null, right:null}
+                    });
+                }
                 const conf = await db.collection('global').doc('config').get();
-                if(conf.exists) { globalConfig = conf.data(); itemsDB = globalConfig.items || itemsDB; nametagsDB = globalConfig.nametags || nametagsDB; }
+                if(conf.exists) { 
+                    globalConfig = conf.data(); 
+                    if(globalConfig.items) itemsDB = globalConfig.items; 
+                    if(globalConfig.nametags) nametagsDB = globalConfig.nametags; 
+                }
                 document.getElementById('auth-screen').classList.add('hidden'); document.getElementById('game-ui').classList.remove('hidden');
                 initZenMode(); fetchWeather();
             } else { document.getElementById('auth-screen').classList.remove('hidden'); }
         });
 
-        // --- ZEN MODE & RESET ---
+        // --- ZEN LOGIC ---
         function getWeekNumber(d) { d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())); d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay()||7)); var yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1)); return Math.ceil((((d - yearStart) / 86400000) + 1)/7); }
 
         function initZenMode() {
@@ -359,31 +446,44 @@
             db.collection('users').doc(myUid).onSnapshot(async d => {
                 if(d.exists) {
                     userData = d.data();
-                    
                     const today = new Date().toLocaleDateString('tr-TR');
                     const curWeek = getWeekNumber(new Date());
                     
                     if(userData.lastWorkDate !== today) await db.collection('users').doc(myUid).update({ todayTime: 0, lastWorkDate: today });
                     if(userData.lastResetWeek !== curWeek) await db.collection('users').doc(myUid).update({ weeklyTime: 0, lastResetWeek: curWeek });
 
-                    const tag = userData.activeNametag ? `<span class="nametag-display">${nametagsDB[userData.activeNametag].name}</span> ` : '';
+                    // Ceza Kontrol
+                    if(userData.punish && userData.punish.until > Date.now()) {
+                        if(userData.activeNametag !== 'tag_punish') await db.collection('users').doc(myUid).update({ activeNametag: 'tag_punish' });
+                    }
+
+                    const tag = userData.activeNametag ? `<span class="nametag-display" style="color:${nametagsDB[userData.activeNametag]?.color||'gold'}; border-color:${nametagsDB[userData.activeNametag]?.color||'gold'}">${nametagsDB[userData.activeNametag]?.name||''}</span> ` : '';
                     document.getElementById('player-name').innerHTML = tag + userData.username;
                     document.getElementById('wallet-display').innerText = userData.wallet;
                     document.getElementById('edit-sign-btn').classList.toggle('hidden', !hasItem('sign'));
                     document.getElementById('edit-color-btn').classList.toggle('hidden', !hasItem('palette'));
-                    
+                    document.getElementById('edit-decor-btn').classList.toggle('hidden', !hasItem('sign')); 
+
                     const mottoText = document.getElementById('motto-text');
-                    if(userData.villageText) { 
-                        mottoText.innerText = userData.villageText; 
-                        document.getElementById('center-container').classList.remove('hidden'); 
-                    }
+                    if(userData.villageText) { mottoText.innerText = userData.villageText; document.getElementById('center-container').classList.remove('hidden'); }
                     if(userData.mottoColor) mottoText.style.color = userData.mottoColor;
-                    
+
+                    updateDecor('left', userData.decors?.left);
+                    updateDecor('right', userData.decors?.right);
                     checkStopwatch();
                 }
             });
         }
         function hasItem(id) { return userData.ownedNametags && userData.ownedNametags.includes(id); }
+        function updateDecor(side, itemId) {
+            const el = document.getElementById('decor-'+side);
+            if(itemId && itemsDB[itemId]) {
+                el.style.backgroundImage = `url('${itemsDB[itemId].img}')`;
+                el.style.display = 'block';
+            } else {
+                el.style.display = 'none';
+            }
+        }
 
         async function fetchWeather() {
             try {
@@ -407,19 +507,16 @@
         function createSnow(c) { for(let i=0; i<50; i++) { const s = document.createElement('div'); s.className='snow'; s.style.left = Math.random()*100+'vw'; s.style.animationDuration = (Math.random()*2 + 2)+'s'; c.appendChild(s); } }
         function createClouds() {
             const c = document.getElementById('cloud-container');
-            setInterval(() => {
-                if(document.querySelectorAll('.cloud').length < 3) {
-                    const cl = document.createElement('div'); cl.className='cloud';
-                    cl.style.top = (Math.random()*20 + 5) + '%'; cl.style.animationDuration = (Math.random()*30 + 30) + 's';
-                    c.appendChild(cl); setTimeout(()=>cl.remove(), 60000);
-                }
-            }, 5000);
+            setInterval(() => { if(document.querySelectorAll('.cloud').length < 3) {
+                const cl = document.createElement('div'); cl.className='cloud';
+                cl.style.top = (Math.random()*20 + 5) + '%'; cl.style.animationDuration = (Math.random()*30 + 30) + 's';
+                c.appendChild(cl); setTimeout(()=>cl.remove(), 60000);
+            }}, 5000);
         }
 
-        // --- TIMER STATE MACHINE ---
+        // --- TIMER ---
         function checkStopwatch() {
             if(stopwatchInterval) { clearInterval(stopwatchInterval); stopwatchInterval = null; }
-            
             db.collection('users').doc(myUid).onSnapshot(doc => {
                 const d = doc.data();
                 if(!d || !d.timer) return;
@@ -445,7 +542,6 @@
                     document.getElementById('controls-toilet').classList.remove('hidden');
                     document.getElementById('timer-circle').classList.add('timer-toilet');
                     centerTimer.style.display = 'block'; centerTimer.classList.add('toilet-mode');
-                    
                     if(stopwatchInterval) clearInterval(stopwatchInterval);
                     stopwatchInterval = setInterval(() => {
                         const passed = Date.now() - d.timer.pauseStart;
@@ -465,6 +561,7 @@
                     document.getElementById('timer-circle').classList.add('timer-break');
                     centerTimer.style.display = 'block'; centerTimer.innerText = "MOLA";
                     centerTimer.classList.add('break-mode');
+                    if(stopwatchInterval) clearInterval(stopwatchInterval);
                 }
             });
             loadActive(); loadLogs();
@@ -478,88 +575,118 @@
             document.getElementById('center-timer').innerText = str;
         }
 
-        // --- ACTIONS ---
         window.startStopwatch = async function() { await db.collection('users').doc(myUid).update({ "timer.state": "working", "timer.startTime": Date.now() }); };
         window.startBreak = async function() { await db.collection('users').doc(myUid).update({ "timer.state": "break", "timer.breakStart": Date.now() }); };
         window.goToToilet = async function() { await db.collection('users').doc(myUid).update({ "timer.state": "toilet", "timer.pauseStart": Date.now() }); };
-        
         window.returnFromToilet = async function() {
             const d = (await db.collection('users').doc(myUid).get()).data();
             const pauseDuration = Date.now() - d.timer.pauseStart;
             await db.collection('users').doc(myUid).update({ "timer.state": "working", "timer.startTime": d.timer.startTime + pauseDuration });
         };
-
         window.handleToiletTimeout = async function(start, pauseStart) {
             const duration = pauseStart - start;
             const mins = Math.floor(duration / 60000);
             await db.collection('users').doc(myUid).update({ "timer.state": "idle" });
-            
             await db.collection('users').doc(myUid).update({
                 wallet: firebase.firestore.FieldValue.increment(Math.floor(mins * globalConfig.goldRate)),
                 weeklyTime: firebase.firestore.FieldValue.increment(duration),
                 todayTime: firebase.firestore.FieldValue.increment(duration)
             });
             await db.collection('users').doc(myUid).collection('logs').add({ start: start, end: pauseStart, duration: duration, note: "Timeout" });
-            alert("Tuvalet süresi doldu! Oturum kapatıldı.");
+            alert("Tuvalet süresi doldu!");
         };
-
         window.stopStopwatch = async function() {
             const d = (await db.collection('users').doc(myUid).get()).data();
             if(d.timer.state === 'break') { await db.collection('users').doc(myUid).update({ "timer.state": "idle" }); return; }
             if(d.timer.state !== 'working') return;
-            
             const duration = Date.now() - d.timer.startTime;
             const mins = Math.floor(duration / 60000);
             let mult = (duration > 7200000) ? 1.2 : 1.0;
             let earned = Math.floor(mins * globalConfig.goldRate * mult);
-
             await db.collection('users').doc(myUid).update({ "timer.state": "idle" });
-
             await db.collection('users').doc(myUid).update({ 
                 wallet: firebase.firestore.FieldValue.increment(earned), 
                 weeklyTime: firebase.firestore.FieldValue.increment(duration),
                 todayTime: firebase.firestore.FieldValue.increment(duration)
             });
             await db.collection('users').doc(myUid).collection('logs').add({ start: d.timer.startTime, end: Date.now(), duration: duration });
-            alert(`${mins} dk çalıştın. +${earned} altın. ${mult>1?'(1.2x)':''}`);
+            alert(`${mins} dk çalıştın. +${earned} altın.`);
         };
 
-        // LISTS & UI
+        // --- DECOR LOGIC ---
+        window.openDecorMenu = function() { 
+            window.closePanels();
+            document.getElementById('panel-decor-select').classList.remove('hidden');
+            document.getElementById('center-container').classList.add('hidden');
+            renderDecorList();
+        }
+        window.setDecorTarget = function(side) { decorTarget = side; alert(side.toUpperCase() + " seçildi. Aşağıdan eşya seç."); }
+        function renderDecorList() {
+            const c = document.getElementById('my-decor-list'); c.innerHTML = '';
+            c.innerHTML += `<div style="border:1px solid #555; padding:5px; text-align:center; width:60px;" onclick="equipDecor(null)">-YOK-<br>❌</div>`;
+            (userData.ownedNametags||[]).forEach(id => {
+                if(itemsDB[id] && itemsDB[id].type === 'decor') {
+                    c.innerHTML += `<div style="border:1px solid #555; padding:5px; text-align:center; width:60px;" onclick="equipDecor('${id}')"><img src="${itemsDB[id].img}" width="40"><br>${itemsDB[id].name}</div>`;
+                }
+            });
+        }
+        window.equipDecor = async function(itemId) {
+            if(!decorTarget) return alert("Önce SAĞA KOY veya SOLA KOY seç!");
+            let update = {}; update[`decors.${decorTarget}`] = itemId;
+            await db.collection('users').doc(myUid).update(update);
+            alert("Yerleştirildi!");
+        }
+
+        // --- NOTIFICATION HELPER ---
+        function showNotification(msg) {
+            const box = document.getElementById('pixel-notif-box');
+            box.innerText = msg;
+            box.style.display = 'block';
+            setTimeout(() => { box.style.display = 'none'; }, 4000);
+        }
+
+        // --- LISTS & LIVE NOTIFS ---
         function loadActive() {
             db.collection('users').onSnapshot(s => {
-                const activeList = document.getElementById('active-workers-list'); 
-                const breakList = document.getElementById('break-workers-list');
+                const activeList = document.getElementById('active-workers-list'); const breakList = document.getElementById('break-workers-list');
                 activeList.innerHTML = ''; breakList.innerHTML = '';
                 
                 s.forEach(doc => {
                     const d = doc.data();
+                    const uid = doc.id;
+
+                    // MOLA BİLDİRİMİ KONTROLÜ
+                    if(!isFirstLoad && d.timer && d.timer.state === 'break' && lastBreakStates[uid] !== 'break') {
+                        showNotification(d.username + " Molaya Çıktı!");
+                    }
+                    lastBreakStates[uid] = d.timer ? d.timer.state : 'idle';
+
                     if(d.username==='ADMIN'||d.username==='lopeinte') return;
                     if(d.timer && d.timer.state !== 'idle') {
                         let row = document.createElement('div');
                         row.style.cssText = "display:flex; justify-content:space-between; font-size:8px; border-bottom:1px solid #333; padding:5px;";
+                        let tagHTML = d.activeNametag ? `<span class="nametag-display" style="color:${nametagsDB[d.activeNametag]?.color||'gold'}; border-color:${nametagsDB[d.activeNametag]?.color||'gold'}">${nametagsDB[d.activeNametag]?.name}</span>` : '';
                         
                         if(d.timer.state === 'working') {
                             const dur = Date.now() - d.timer.startTime;
                             let durStr = `(${Math.floor(dur/60000)} dk)`;
-                            let cl = 'color:#0f0'; let st = '(Calisiyor)';
+                            let cl = 'color:#0f0'; let st = '(Çalışıyor)';
                             if(dur > 7200000) { cl='worker-gold'; st+=' 🔥'; }
-                            row.innerHTML = `<span style="${cl}">● ${d.username} ${durStr}</span><span>${st}</span>`;
+                            row.innerHTML = `<span style="${cl}">${tagHTML}● ${d.username} ${durStr}</span><span>${st}</span>`;
                             activeList.appendChild(row);
-                        } 
-                        else if (d.timer.state === 'toilet') {
-                            row.innerHTML = `<span style="color:#e74c3c">● ${d.username}</span><span>(Tuvalette)</span>`;
+                        } else if (d.timer.state === 'toilet') {
+                            row.innerHTML = `<span style="color:#e74c3c">${tagHTML}● ${d.username}</span><span>(WC)</span>`;
                             activeList.appendChild(row);
-                        }
-                        else if (d.timer.state === 'break') {
-                            row.innerHTML = `<span style="color:#3498db">● ${d.username}</span><span>(İBİŞ)</span>`;
+                        } else if (d.timer.state === 'break') {
+                            row.innerHTML = `<span style="color:#3498db">${tagHTML}● ${d.username}</span><span>(İBİŞ)</span>`;
                             breakList.appendChild(row);
                         }
                     }
                 });
+                isFirstLoad = false; // İlk yükleme bitti, artık bildirim gönderebilir
             });
         }
-
-        function loadLogs() {
+        function loadLogs() { 
             db.collection('users').doc(myUid).collection('logs').orderBy('end', 'desc').limit(10).onSnapshot(s => {
                 const t = document.getElementById('work-log-table'); t.innerHTML = '';
                 s.forEach(doc => {
@@ -571,70 +698,135 @@
         }
 
         // --- MARKET & PANELS ---
-        window.openPanel = function(p) { 
-            window.closePanels(); 
-            document.getElementById('panel-'+p).classList.remove('hidden'); 
-            document.getElementById('center-container').classList.add('hidden');
-            if(p==='shop') switchMarketTab('items'); 
-            else if(p==='players') loadRanking(); 
-            else if(p==='profile') renderMyTags(); 
-            else if(p==='tyt') renderCurriculum('tyt'); 
-        };
-        window.closePanels = function() { 
-            document.querySelectorAll('.modal').forEach(e=>e.classList.add('hidden')); 
-            document.getElementById('center-container').classList.remove('hidden');
-        };
-
+        window.openPanel = function(p) { window.closePanels(); document.getElementById('panel-'+p).classList.remove('hidden'); document.getElementById('center-container').classList.add('hidden'); if(p==='shop') switchMarketTab('items'); else if(p==='players') loadRanking(); else if(p==='profile') renderMyTags(); else if(p==='tyt') renderCurriculum('tyt'); };
+        window.closePanels = function() { document.querySelectorAll('.modal').forEach(e=>e.classList.add('hidden')); document.getElementById('center-container').classList.remove('hidden'); };
         window.switchMarketTab = function(tab) {
             const c = document.getElementById('shop-container'); c.innerHTML = '';
             document.querySelectorAll('.m-tab').forEach(t => t.classList.remove('active')); event.target.classList.add('active');
-            if(tab === 'items') {
-                Object.entries(itemsDB).forEach(([k,v]) => {
-                    let owned = hasItem(k);
-                    let btnHTML = owned ? `<button class="btn owned-item">SATIN ALINDI</button>` : `<button class="btn" onclick="window.buyItem('${k}', ${v.cost})">AL</button>`;
-                    c.innerHTML += `<div class="${owned?'locked-item':''}" style="display:flex; justify-content:space-between; background:#222; padding:10px; margin-bottom:5px; border:1px solid #444;"><span>${v.name}</span> <span style="color:${owned?'#2ecc71':'gold'}">${owned?'':v.cost+' G'}</span> ${btnHTML}</div>`;
-                });
-            } else {
-                Object.entries(nametagsDB).forEach(([k,v]) => {
-                    let locked = (v.req === 'tyt_done' && userData.completedTopics.length < 20);
-                    let owned = hasItem(k);
-                    let btnHTML = owned ? `<button class="btn owned-item">SATIN ALINDI</button>` : `<button class="btn" onclick="window.buyNametag('${k}', ${v.cost})">AL</button>`;
-                    c.innerHTML += `<div class="${(locked||owned)?'locked-item':''}" style="display:flex; justify-content:space-between; background:#222; padding:10px; margin-bottom:5px; border:1px solid #444;"><span>${v.name}</span> <span style="color:${owned?'#2ecc71':'gold'}">${owned?'':v.cost+' G'}</span> ${btnHTML}</div>`;
-                });
-            }
-        };
+            let source = {};
+            if(tab === 'items') Object.entries(itemsDB).forEach(([k,v]) => { if(v.type === 'tool') source[k] = v; });
+            else if (tab === 'decor') Object.entries(itemsDB).forEach(([k,v]) => { if(v.type === 'decor') source[k] = v; });
+            else source = nametagsDB;
 
+            Object.entries(source).forEach(([k,v]) => {
+                let owned = hasItem(k);
+                let btnHTML = owned ? `<button class="btn owned-item">SATIN ALINDI</button>` : `<button class="btn" onclick="window.buyItem('${k}', ${v.cost})">AL</button>`;
+                let imgHTML = v.img ? `<img src="${v.img}" width="30" style="vertical-align:middle; margin-right:5px;">` : '';
+                c.innerHTML += `<div class="${owned?'locked-item':''}" style="display:flex; justify-content:space-between; align-items:center; background:#222; padding:10px; margin-bottom:5px; border:1px solid #444;"><span>${imgHTML}${v.name}</span> <span style="color:${owned?'#2ecc71':'gold'}">${owned?'':v.cost+' G'}</span> ${btnHTML}</div>`;
+            });
+        };
         window.buyItem = async function(id, cost) {
             if(userData.wallet < cost) return alert("Para yok");
             await db.collection('users').doc(myUid).update({ wallet: firebase.firestore.FieldValue.increment(-cost), ownedNametags: firebase.firestore.FieldValue.arrayUnion(id) }); alert("Alındı!");
         };
-        window.buyNametag = async function(id, cost) {
-            if(userData.wallet < cost) return alert("Para yok");
-            await db.collection('users').doc(myUid).update({ wallet: firebase.firestore.FieldValue.increment(-cost), ownedNametags: firebase.firestore.FieldValue.arrayUnion(id), activeNametag: id }); alert("Kuşanıldı!");
-        };
-        window.editVillageSign = async function() { const t = prompt("Motto:"); if(t) await db.collection('users').doc(myUid).update({ villageText: t }); };
-        window.editMottoColor = async function() { const c = prompt("Renk Kodu (örn: #ff0000):"); if(c) await db.collection('users').doc(myUid).update({ mottoColor: c }); };
 
         // --- ADMIN ---
         window.openAdminLogin = function() { window.closePanels(); document.getElementById('admin-login-modal').classList.remove('hidden'); };
         window.verifyAdmin = function() { if(document.getElementById('admin-user').value==='lopeinte'&&document.getElementById('admin-pass').value==='enes14enes'){ document.getElementById('admin-login-modal').classList.add('hidden'); openAdminPanel(); } };
+        
         async function openAdminPanel() {
             document.getElementById('admin-panel').classList.remove('hidden');
-            const ntList = document.getElementById('admin-nametags-list'); ntList.innerHTML = '';
-            Object.entries(nametagsDB).forEach(([k,v]) => {
-                ntList.innerHTML += `<tr><td>${k}</td><td>${v.name}</td><td>${v.cost}</td><td><button style="background:red; color:white;" onclick="deleteNametag('${k}')">SIL</button></td></tr>`;
-            });
+            
+            // Failsafe execution
+            try { await loadAdminDropdowns(); } catch(e){ console.log(e); }
+            try { renderAdminMarketItems(); } catch(e){ console.log(e); }
+            try { renderUserList(); } catch(e){ console.log(e); }
+        }
+
+        async function renderUserList() {
             const uList = document.getElementById('admin-users-list'); uList.innerHTML = '';
             (await db.collection('users').get()).forEach(d => {
-                const dd = d.data(); uList.innerHTML += `<tr><td>${dd.username}</td><td>${dd.wallet}</td><td><button style="background:red; color:white;" onclick="deleteUser('${d.id}')">SIL</button></td></tr>`;
+                const dd = d.data(); 
+                uList.innerHTML += `<tr><td>${dd.username}</td><td>${dd.wallet}</td><td><button style="background:red; color:white;" onclick="deleteUser('${d.id}')">SIL</button></td></tr>`;
             });
         }
+
+        async function loadAdminDropdowns() {
+            // Users
+            const usersSnap = await db.collection('users').get();
+            let userOpts = "";
+            usersSnap.forEach(doc => { userOpts += `<option value="${doc.id}">${doc.data().username}</option>`; });
+            document.getElementById('punish-user-select').innerHTML = userOpts;
+            document.getElementById('time-user-select').innerHTML = userOpts;
+
+            // Tags (Also for delete)
+            let tagOpts = "";
+            Object.entries(nametagsDB).forEach(([k,v]) => { tagOpts += `<option value="${k}">${v.name}</option>`; });
+            document.getElementById('tag-id-select').innerHTML = tagOpts;
+            document.getElementById('delete-tag-select').innerHTML = tagOpts;
+        }
+
+        function renderAdminMarketItems() {
+            const list = document.getElementById('admin-market-list'); list.innerHTML = '';
+            const allItems = { ...itemsDB, ...nametagsDB }; 
+            Object.entries(allItems).forEach(([k, v]) => {
+                list.innerHTML += `<div style="display:flex; justify-content:space-between; margin-bottom:5px; font-size:9px;">
+                    <span>${v.name}</span>
+                    <input id="price-${k}" value="${v.cost}" style="width:50px; background:#000; color:#fff; border:1px solid #555;">
+                    <button onclick="updateItemPrice('${k}')" style="background:#27ae60; color:fff; border:none;">OK</button>
+                </div>`;
+            });
+        }
+
+        window.updateItemPrice = async function(itemId) {
+            const newCost = parseInt(document.getElementById('price-'+itemId).value);
+            if(itemsDB[itemId]) {
+                itemsDB[itemId].cost = newCost;
+                await db.collection('global').doc('config').set({items: itemsDB}, {merge:true});
+            } else if(nametagsDB[itemId]) {
+                nametagsDB[itemId].cost = newCost;
+                await db.collection('global').doc('config').set({nametags: nametagsDB}, {merge:true});
+            }
+            alert("Fiyat güncellendi!");
+        };
+
+        window.updateGoldRate = async function() {
+            let val = parseFloat(document.getElementById('admin-gold-rate').value);
+            if(!val) return;
+            globalConfig.goldRate = val;
+            await db.collection('global').doc('config').set({goldRate: val}, {merge:true}); alert("Çarpan Güncellendi");
+        };
+        window.editTagColor = async function() {
+            let id = document.getElementById('tag-id-select').value;
+            let col = document.getElementById('tag-color-edit').value;
+            if(nametagsDB[id]) { nametagsDB[id].color = col; await db.collection('global').doc('config').set({nametags: nametagsDB}, {merge:true}); alert("Renk Değişti"); }
+        };
+        window.deleteTagFromSelect = async function() {
+            let id = document.getElementById('delete-tag-select').value;
+            if(!id) return;
+            if(!confirm("Bu etiketi silmek istediğine emin misin?")) return;
+            delete nametagsDB[id];
+            await db.collection('global').doc('config').set({nametags: nametagsDB}, {merge:true});
+            alert("Etiket silindi!");
+            openAdminPanel(); // Listeleri yenile
+        };
+        window.punishUser = async function() {
+            let targetUid = document.getElementById('punish-user-select').value;
+            let tagName = document.getElementById('punish-tag').value || 'İBİŞ';
+            let tagColor = document.getElementById('punish-color').value || '#ccc';
+            let days = parseInt(document.getElementById('punish-days').value) || 1;
+            
+            nametagsDB['tag_punish'] = { name: tagName, cost: 999999, color: tagColor, req: 'admin' };
+            await db.collection('global').doc('config').set({nametags: nametagsDB}, {merge:true});
+
+            await db.collection('users').doc(targetUid).update({
+                activeNametag: 'tag_punish',
+                punish: { until: Date.now() + (days * 86400000) }
+            });
+            alert("Cezalandırıldı!");
+        };
+        window.modifyUserTime = async function() {
+            let targetUid = document.getElementById('time-user-select').value;
+            let amount = parseInt(document.getElementById('time-amount').value);
+            await db.collection('users').doc(targetUid).update({ weeklyTime: firebase.firestore.FieldValue.increment(amount * 60000) });
+            alert("Süre güncellendi");
+        };
+        
         window.addNewNametag = async function() {
             const id=document.getElementById('new-tag-id').value; const n=document.getElementById('new-tag-name').value; const c=parseInt(document.getElementById('new-tag-cost').value);
-            nametagsDB[id] = {name:n, cost:c, req:null}; await db.collection('global').doc('config').set({nametags:nametagsDB}, {merge:true}); alert("Eklendi"); openAdminPanel();
+            nametagsDB[id] = {name:n, cost:c, req:null, color:'gold'}; await db.collection('global').doc('config').set({nametags:nametagsDB}, {merge:true}); alert("Eklendi"); openAdminPanel();
         };
         window.deleteNametag = async function(id) { delete nametagsDB[id]; await db.collection('global').doc('config').set({nametags:nametagsDB}, {merge:true}); alert("Silindi"); openAdminPanel(); };
-        
         window.deleteUser = async function(uid) {
             if(!confirm("Emin misin? Tüm veriler silinecek!")) return;
             const logs = await db.collection('users').doc(uid).collection('logs').get();
@@ -642,10 +834,33 @@
             await db.collection('users').doc(uid).delete(); alert("Kullanıcı silindi."); openAdminPanel();
         };
 
-        // --- TYT & OTHERS ---
-        window.switchCurriculum = function(type) {
-            document.querySelectorAll('.c-tab').forEach(t => t.classList.remove('active')); event.target.classList.add('active'); renderCurriculum(type);
-        };
+        // ... Other functions ...
+        function renderMyTags() {
+            const c = document.getElementById('my-tags-list'); c.innerHTML = '';
+            if(userData.punish && userData.punish.until > Date.now()) {
+                c.innerHTML = `<div style="color:red; text-align:center;">CEZALISIN! ${new Date(userData.punish.until).toLocaleDateString()} tarihine kadar tag değiştiremezsin.</div>`;
+                return;
+            }
+            (userData.ownedNametags||[]).forEach(id => { 
+                if(nametagsDB[id]) c.innerHTML += `<div style="border:1px solid #444; padding:10px; margin:5px; display:flex; justify-content:space-between;"><span>${nametagsDB[id].name}</span> <button class="btn" onclick="equipTag('${id}')">TAK</button></div>`; 
+            });
+            c.innerHTML += `<button class="btn" style="background:#c0392b; width:100%; margin-top:10px;" onclick="equipTag('')">ÇIKAR</button>`;
+        }
+        window.equipTag = async function(id) { await db.collection('users').doc(myUid).update({ activeNametag: id }); alert("Tamam."); };
+        
+        function loadRanking() {
+            db.collection('users').get().then(s => {
+                const l = document.getElementById('player-list-container'); l.innerHTML = '';
+                let u = []; s.forEach(d => { if(d.data().username!=='ADMIN') u.push(d.data()); });
+                u.sort((a,b) => b.weeklyTime - a.weeklyTime); 
+                u.forEach((x,i) => { 
+                    let tagHTML = x.activeNametag ? `<span class="nametag-display" style="color:${nametagsDB[x.activeNametag]?.color||'gold'}; border-color:${nametagsDB[x.activeNametag]?.color||'gold'}">${nametagsDB[x.activeNametag]?.name}</span>` : '';
+                    l.innerHTML += `<div class="leaderboard-row"><div>${i<2?'🥇':''} ${tagHTML} ${x.username}</div><div class="glowing-time">${Math.floor(x.weeklyTime/60000)} dk</div></div>`; 
+                });
+            });
+        }
+        window.toggleEditMode = function() {}; 
+        window.switchCurriculum = function(type) { document.querySelectorAll('.c-tab').forEach(t => t.classList.remove('active')); event.target.classList.add('active'); renderCurriculum(type); };
         window.renderCurriculum = function(type) {
             const c = document.getElementById('tyt-container'); c.innerHTML = '';
             for(const [lesson, topics] of Object.entries(curriculumData[type])) {
@@ -658,21 +873,6 @@
             if(userData.completedTopics.includes(t)) await db.collection('users').doc(myUid).update({ completedTopics: firebase.firestore.FieldValue.arrayRemove(t) });
             else await db.collection('users').doc(myUid).update({ completedTopics: firebase.firestore.FieldValue.arrayUnion(t) });
         };
-        function renderMyTags() {
-            const c = document.getElementById('my-tags-list'); c.innerHTML = '';
-            (userData.ownedNametags||[]).forEach(id => { if(nametagsDB[id]) c.innerHTML += `<div style="border:1px solid #444; padding:10px; margin:5px; display:flex; justify-content:space-between;"><span>${nametagsDB[id].name}</span> <button class="btn" onclick="equipTag('${id}')">TAK</button></div>`; });
-            c.innerHTML += `<button class="btn" style="background:#c0392b; width:100%; margin-top:10px;" onclick="equipTag('')">ÇIKAR</button>`;
-        }
-        window.equipTag = async function(id) { await db.collection('users').doc(myUid).update({ activeNametag: id }); alert("Tamam."); };
-        function loadRanking() {
-            db.collection('users').get().then(s => {
-                const l = document.getElementById('player-list-container'); l.innerHTML = '';
-                let u = []; s.forEach(d => { if(d.data().username!=='ADMIN') u.push(d.data()); });
-                u.sort((a,b) => b.weeklyTime - a.weeklyTime); // WEEKLY SORT
-                u.forEach((x,i) => { l.innerHTML += `<div class="leaderboard-row"><div>${i<2?'🥇':''} ${x.activeNametag?nametagsDB[x.activeNametag].name:''} ${x.username}</div><div class="glowing-time">${Math.floor(x.weeklyTime/60000)} dk</div></div>`; });
-            });
-        }
-        window.toggleEditMode = function() {}; 
     </script>
 </body>
 </html>
