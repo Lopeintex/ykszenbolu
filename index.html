@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>YKS Zen V30 (UI Tweaks & New BG)</title>
+    <title>YKS Zen V40 (Final Audio Fix)</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@700&display=swap" rel="stylesheet">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -20,13 +20,10 @@
 
         /* ARKA PLAN SİSTEMİ */
         #custom-background { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-size: cover; background-position: center; z-index: -10; transition: background-image 1s ease-in-out; image-rendering: pixelated; }
-        
-        /* GÜNDÜZ MODU (Yeni Link) */
         .day-mode { background-image: url('https://giffiles.alphacoders.com/209/209343.gif'); }
-        /* GECE MODU */
         .night-mode { background-image: url('https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/3955b514-aadc-4d7d-8248-71fc5b9c30ce/dg39dc3-55810788-e69f-48db-bf61-a92401dd34d2.gif?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiIvZi8zOTU1YjUxNC1hYWRjLTRkN2QtODI0OC03MWZjNWI5YzMwY2UvZGczOWRjMy01NTgxMDc4OC1lNjlmLTQ4ZGItYmY2MS1hOTI0MDFkZDM0ZDIuZ2lmIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.MoWcAQvq6rRrkEHcItZvZkWKrfY9QEZIg2BglKVoB38'); }
 
-        /* BULUTLAR (Sadece Gece) */
+        /* BULUTLAR */
         #cloud-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -5; pointer-events: none; display: none; }
         .night-mode ~ #cloud-container { display: block; } 
         .cloud { position: absolute; width: 140px; height: 70px; background-image: url('https://i.ibb.co/q3Qkm8mm/download.png'); background-size: contain; background-repeat: no-repeat; opacity: 0.8; animation: floatCloud linear infinite; image-rendering: pixelated; }
@@ -42,22 +39,8 @@
         #center-container { position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%); text-align: center; width: 90%; max-width: 600px; z-index: 10; transition: opacity 0.5s ease; }
         #motto-text { font-size: 20px; color: #f1c40f; margin-bottom: 10px; line-height: 1.5; transition: color 0.5s; text-shadow: 3px 3px 0px #000; }
         #weather-info { font-size: 10px; color: #ddd; margin-bottom: 20px; text-shadow: 2px 2px 0px #000; }
-        
-        /* RAMAZAN SAYACI (Büyütüldü ve Parıltı Eklendi) */
-        #ramadan-countdown { 
-            font-size: 16px; 
-            color: #fff; 
-            margin-bottom: 15px; 
-            font-family: 'Courier Prime', monospace; 
-            font-weight: bold; 
-            display: none; 
-            animation: ramadanGlow 1.5s ease-in-out infinite alternate;
-        }
-        @keyframes ramadanGlow {
-            from { text-shadow: 0 0 5px #ffd700, 0 0 10px #ff8c00, 2px 2px 0px #000; }
-            to { text-shadow: 0 0 15px #ffd700, 0 0 25px #ff8c00, 0 0 35px #ff4500, 2px 2px 0px #000; }
-        }
-
+        #ramadan-countdown { font-size: 16px; color: #fff; margin-bottom: 15px; font-family: 'Courier Prime', monospace; font-weight: bold; display: none; animation: ramadanGlow 1.5s ease-in-out infinite alternate; }
+        @keyframes ramadanGlow { from { text-shadow: 0 0 5px #ffd700, 0 0 10px #ff8c00, 2px 2px 0px #000; } to { text-shadow: 0 0 15px #ffd700, 0 0 25px #ff8c00, 0 0 35px #ff4500, 2px 2px 0px #000; } }
         #center-timer { font-size: 40px; color: #fff; letter-spacing: 3px; font-family: 'Courier Prime', monospace; font-weight: bold; display: none; text-shadow: 4px 4px 0px #000; }
         .break-mode { color: #3498db !important; }
         .toilet-mode { color: #e74c3c !important; animation: pulse 1.5s infinite; }
@@ -68,13 +51,25 @@
         #decor-left { top: 55%; left: 10%; transform: translateY(-50%); }
         #decor-right { top: 55%; right: 10%; transform: translateY(-50%); }
 
-        /* SOL TARAFTAKİ SAYAÇLAR (Büyütüldü) */
-        #left-counters { position: fixed; top: 70%; left: 20px; transform: translateY(-50%); display: flex; flex-direction: column; gap: 20px; z-index: 10; pointer-events: none; }
+        /* SAYAÇLAR */
+        #left-counters { position: fixed; top: 60%; left: 20px; transform: translateY(-50%); display: flex; flex-direction: column; gap: 20px; z-index: 10; pointer-events: none; }
         .exam-counter-box { text-align: left; color: #fff; min-width: 200px; text-shadow: 2px 2px 0px #000; }
         .exam-title { color: #f1c40f; font-size: 13px; margin-bottom: 8px; border-bottom: 2px solid #f1c40f; display: inline-block; padding-bottom: 2px; }
         .exam-time { font-family: 'Courier Prime', monospace; font-size: 15px; color: #fff; line-height: 1.5; }
 
-        /* PET SİSTEMİ UI (SAĞ ALT) */
+        /* RADYO SİSTEMİ */
+        #radio-container { position: fixed; bottom: 90px; left: 20px; z-index: 20; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+        .radio-btn { width: 45px; height: 45px; background: rgba(20,20,20,0.8); border: 2px solid #555; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; transition: all 0.2s; box-shadow: 2px 2px 10px rgba(0,0,0,0.5); }
+        .radio-btn:hover { border-color: #f1c40f; transform: scale(1.05); }
+        .radio-btn:active { transform: scale(0.95); }
+        #radio-menu { position: absolute; bottom: 110px; left: 0; background: rgba(10,10,10,0.9); border: 2px solid #444; border-radius: 10px; padding: 8px; width: 170px; display: none; flex-direction: column; gap: 5px; box-shadow: 0 5px 15px rgba(0,0,0,0.8); }
+        #radio-menu.open { display: flex; animation: slideUp 0.2s ease; }
+        @keyframes slideUp { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
+        .radio-option { padding: 10px; font-size: 9px; cursor: pointer; border-radius: 5px; transition: background 0.2s; border: 1px solid transparent; }
+        .radio-option:hover { background: #333; border-color: #555; }
+        .radio-option.active { background: #f1c40f; color: #000; border-color: #f1c40f; font-weight: bold; }
+
+        /* PET SİSTEMİ */
         #pet-container { position: fixed; bottom: 90px; right: 20px; z-index: 20; display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: transform 0.2s; }
         #pet-container:active { transform: scale(0.95); }
         .empty-pet-slot { width: 80px; height: 80px; border: 4px dashed #555; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 40px; color: #555; background: rgba(0,0,0,0.3); text-shadow: 2px 2px 0px #000; }
@@ -92,15 +87,18 @@
         #pixel-notif-box { position: fixed; bottom: 80px; left: 10px; background: rgba(0, 0, 0, 0.9); border: 2px solid #fff; padding: 10px; color: #0f0; font-size: 9px; z-index: 5000; display: none; animation: slideIn 0.5s ease; box-shadow: 5px 5px 0px rgba(0,0,0,0.5); }
         @keyframes slideIn { from { transform: translateX(-100%); } to { transform: translateX(0); } }
 
-        /* GİRİŞ */
+        /* GİRİŞ & MODALLAR */
         #auth-screen { position: fixed; top:0; left:0; width:100%; height:100%; z-index:9999; display:flex; align-items:center; justify-content:center; flex-direction: column; background: linear-gradient(to bottom, #4facfe 0%, #00f2fe 100%); }
         .auth-box { background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(5px); padding: 30px; border: 1px solid rgba(255,255,255,0.2); border-radius: 15px; text-align: center; width: 85%; max-width: 350px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .auth-input { width: 90%; padding: 15px; margin: 10px 0; background: rgba(0,0,0,0.5); border: 1px solid #555; color: #fff; font-family: inherit; font-size: 10px; text-align: center; border-radius: 5px; }
         .secret-admin-btn { position: absolute; bottom: 15px; right: 15px; font-size: 30px; opacity: 0.1; cursor: pointer; color: #fff; z-index: 10000; }
         .checkbox-container { display: flex; align-items: center; justify-content: center; gap: 5px; margin-top: 10px; font-size: 9px; color: #ddd; }
         .checkbox-container input { cursor: pointer; }
-
-        /* MARKET & ITEMS */
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 10, 10, 0.9); backdrop-filter: blur(10px); z-index: 3000; display: flex; flex-direction: column; align-items: center; padding-top: 70px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+        .hidden { display: none !important; }
+        .btn { background: #e67e22; color: #fff; border: 2px solid #fff; padding: 10px; font-family: inherit; cursor: pointer; margin: 5px; font-size: 8px;}
+        .close-btn { position: fixed; top: 15px; right: 15px; width: 40px; height: 40px; background: #c0392b; color: white; border: 2px solid white; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; z-index: 4500; border-radius: 8px; }
+        
         .market-tabs { display: flex; width: 90%; justify-content: space-around; margin-bottom: 10px; }
         .m-tab { background: #333; border: 1px solid #555; padding: 10px; flex: 1; text-align: center; cursor: pointer; }
         .m-tab.active { background: #e67e22; color: #fff; border-color: #fff; }
@@ -108,14 +106,6 @@
         .locked-item::after { content: '🔒'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 24px; text-shadow: 0 0 5px black; }
         .owned-item { opacity: 0.5; pointer-events: none; border-color: #27ae60 !important; background: #0f351e !important; }
         #shop-container { width: 90%; padding-bottom: 150px; }
-
-        /* MODALS */
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 10, 10, 0.9); backdrop-filter: blur(10px); z-index: 3000; display: flex; flex-direction: column; align-items: center; padding-top: 70px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
-        .hidden { display: none !important; }
-        .btn { background: #e67e22; color: #fff; border: 2px solid #fff; padding: 10px; font-family: inherit; cursor: pointer; margin: 5px; font-size: 8px;}
-        .close-btn { position: fixed; top: 15px; right: 15px; width: 40px; height: 40px; background: #c0392b; color: white; border: 2px solid white; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; z-index: 4500; border-radius: 8px; }
-
-        /* Diğer Stiller */
         .leaderboard-row { background: rgba(30,30,30,0.8); width: 95%; padding: 12px; margin: 6px 0; display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 10px; border-bottom: 1px solid #444; }
         .nametag-display { font-size: 8px; color: gold; border: 1px solid gold; padding: 2px 4px; border-radius: 3px; margin-right: 5px; }
         .worker-gold { color: gold; text-shadow: 0 0 5px gold; font-weight: bold; }
@@ -136,9 +126,6 @@
         .tyt-topics.open { display: block; }
         .topic-item { padding: 8px; border-bottom: 1px solid #333; display: flex; align-items: center; }
         #tyt-container { width: 95%; padding-bottom: 150px; }
-        .log-dim { color: #555; } .log-bright { color: #ccc; } .log-gold { color: gold; text-shadow: 0 0 5px gold; }
-
-        /* PET SEÇİM MENÜSÜ */
         #pet-grid { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; width: 95%; }
         .pet-card { background: #222; border: 2px solid #444; border-radius: 10px; padding: 10px; text-align: center; width: 100px; cursor: pointer; position: relative; }
         .pet-card.active { border-color: #f1c40f; background: #333; }
@@ -146,6 +133,9 @@
         .pet-info { font-size: 8px; margin-top: 5px; color: #aaa; }
         .stage-badge { position: absolute; top: 5px; right: 5px; background: #3498db; color: #fff; font-size: 7px; padding: 2px 4px; border-radius: 4px; }
 
+        input[type=range] { -webkit-appearance: none; appearance: none; width: 100%; background: transparent; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; height: 16px; width: 16px; border-radius: 50%; background: #f1c40f; cursor: pointer; margin-top: -6px; box-shadow: 0 0 5px #000; }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 6px; cursor: pointer; background: #555; border-radius: 3px; }
     </style>
 </head>
 <body>
@@ -156,9 +146,22 @@
     <div id="decor-left" class="decor-slot"></div>
     <div id="decor-right" class="decor-slot"></div>
     
+    <audio id="zen-audio" loop></audio>
+
     <div id="left-counters">
         <div class="exam-counter-box"><div class="exam-title">TYT 2026</div><div class="exam-time" id="tyt-counter">Yükleniyor...</div></div>
         <div class="exam-counter-box"><div class="exam-title">YÖKDİL 2026</div><div class="exam-time" id="yokdil-counter">Yükleniyor...</div></div>
+    </div>
+
+    <div id="radio-container">
+        <div id="radio-menu">
+            <div id="r-opt-lofi" class="radio-option" onclick="window.changeRadioStation('lofi')">🎵 Lo-Fi Hip Hop</div>
+            <div id="r-opt-fire" class="radio-option" onclick="window.changeRadioStation('fire')">🔥 Kamp Ateşi</div>
+            <div id="r-opt-rain" class="radio-option" onclick="window.changeRadioStation('rain')">🌧️ Yağmur Sesi</div>
+            <div id="r-opt-none" class="radio-option active" onclick="window.changeRadioStation('none')">❌ Kapat</div>
+        </div>
+        <div class="radio-btn" onclick="window.toggleRadioMenu()" title="Kanallar">📻</div>
+        <div class="radio-btn" id="radio-play-btn" onclick="window.toggleRadioPlay()" title="Oynat/Durdur" style="font-size: 16px;">▶️</div>
     </div>
 
     <div id="pixel-notif-box"></div>
@@ -202,8 +205,9 @@
                 <button id="edit-color-btn" class="btn hidden" style="padding: 5px; background: #9b59b6; margin:0;" onclick="editMottoColor()">🎨</button>
                 <button id="edit-decor-btn" class="btn hidden" style="padding: 5px; background: #8e44ad; margin:0;" onclick="openDecorMenu()">📦</button>
             </div>
-            <div style="text-align: right; margin-right: 25px;">
+            <div style="display:flex; align-items:center; justify-content: flex-end; margin-right: 25px;">
                 <div style="color:gold; font-size:10px;">💰 <span id="wallet-display">0</span></div>
+                <button class="btn" style="padding: 5px; background: #555; margin-left: 10px; border-color: #777;" onclick="window.openPanel('settings')">⚙️</button>
             </div>
         </div>
 
@@ -217,8 +221,7 @@
     </div>
 
     <div id="panel-work" class="modal hidden">
-        <div class="close-btn" onclick="window.closePanels()">×</div>
-        <h2 style="color: #3498db;">ÇALIŞMA ODASI</h2>
+        <div class="close-btn" onclick="window.closePanels()">×</div><h2 style="color: #3498db;">ÇALIŞMA ODASI</h2>
         <div class="pomodoro-container">
             <div class="pomo-left">
                 <div id="timer-circle" class="timer-circle"><div id="sw-display" style="font-size:22px;">00:00:00</div></div>
@@ -235,60 +238,43 @@
         <div style="width:90%; margin-top:20px; border-top:1px solid #333; padding-top:10px;"><h3 style="font-size:9px; color:#aaa;">BUGÜNKÜ LOG</h3><table style="width:100%; font-size:8px; color:#aaa;"><tbody id="work-log-table"></tbody></table></div>
     </div>
 
-    <div id="panel-shop" class="modal hidden">
-        <div class="close-btn" onclick="window.closePanels()">×</div><h2 style="color:gold;">MARKET</h2>
-        <div class="market-tabs"><div class="m-tab active" onclick="switchMarketTab('items')">EŞYALAR</div><div class="m-tab" onclick="switchMarketTab('decor')">DEKOR</div><div class="m-tab" onclick="switchMarketTab('nametags')">ETİKETLER</div></div>
-        <div id="shop-container" style="width:90%; padding-bottom:100px;"></div>
-    </div>
-
-    <div id="panel-profile" class="modal hidden">
-        <div class="close-btn" onclick="window.closePanels()">×</div><h2 style="color:#9b59b6;">PROFİL</h2>
-        <div style="width:90%;"><h3>HAFTALIK GRAFİK</h3><canvas id="weeklyChart" style="background:rgba(255,255,255,0.1); border-radius:5px; max-height:200px;"></canvas><h3>ETİKETLERİN</h3><div id="my-tags-list"></div></div>
-    </div>
-
+    <div id="panel-shop" class="modal hidden"><div class="close-btn" onclick="window.closePanels()">×</div><h2 style="color:gold;">MARKET</h2><div class="market-tabs"><div class="m-tab active" onclick="switchMarketTab('items')">EŞYALAR</div><div class="m-tab" onclick="switchMarketTab('decor')">DEKOR</div><div class="m-tab" onclick="switchMarketTab('nametags')">ETİKETLER</div></div><div id="shop-container" style="width:90%; padding-bottom:100px;"></div></div>
+    <div id="panel-profile" class="modal hidden"><div class="close-btn" onclick="window.closePanels()">×</div><h2 style="color:#9b59b6;">PROFİL</h2><div style="width:90%;"><h3>HAFTALIK GRAFİK</h3><canvas id="weeklyChart" style="background:rgba(255,255,255,0.1); border-radius:5px; max-height:200px;"></canvas><h3>ETİKETLERİN</h3><div id="my-tags-list"></div></div></div>
     <div id="panel-players" class="modal hidden"><div class="close-btn" onclick="window.closePanels()">×</div><h2 style="color:#3498db;">HAFTALIK LİDERLİK</h2><div id="player-list-container" style="width:100%; padding-bottom:150px;"></div></div>
-    
-    <div id="panel-tyt" class="modal hidden">
-        <div class="close-btn" onclick="window.closePanels()">×</div><h2>MÜFREDAT</h2>
-        <div class="curriculum-tabs"><div class="c-tab active" onclick="switchCurriculum('tyt')">TYT</div><div class="c-tab" onclick="switchCurriculum('ayt')">AYT</div></div>
-        <div id="tyt-container" style="width:95%; padding-bottom:150px;"></div>
-    </div>
+    <div id="panel-tyt" class="modal hidden"><div class="close-btn" onclick="window.closePanels()">×</div><h2>MÜFREDAT</h2><div class="curriculum-tabs"><div class="c-tab active" onclick="switchCurriculum('tyt')">TYT</div><div class="c-tab" onclick="switchCurriculum('ayt')">AYT</div></div><div id="tyt-container" style="width:95%; padding-bottom:150px;"></div></div>
+    <div id="panel-decor-select" class="modal hidden"><div class="close-btn" onclick="window.closePanels()">×</div><h2>YERLEŞTİR</h2><div style="display:flex; gap:10px; margin-bottom:20px;"><button class="btn" onclick="setDecorTarget('left')">SOLA KOY</button><button class="btn" onclick="setDecorTarget('right')">SAĞA KOY</button></div><div id="my-decor-list" style="width:90%; display:flex; flex-wrap:wrap; gap:10px; justify-content:center;"></div></div>
+    <div id="panel-pet-select" class="modal hidden"><div class="close-btn" onclick="window.closePanels()">×</div><h2 style="color:#f1c40f;">YOLDAŞLARIM</h2><div id="pet-grid"></div><div style="margin-top: 20px; font-size: 9px; color: #aaa; text-align: center;">Bebek: 120dk | Genç: 600dk | Boss: 2000dk</div></div>
 
-    <div id="panel-decor-select" class="modal hidden">
-        <div class="close-btn" onclick="window.closePanels()">×</div><h2>YERLEŞTİR</h2>
-        <div style="display:flex; gap:10px; margin-bottom:20px;"><button class="btn" onclick="setDecorTarget('left')">SOLA KOY</button><button class="btn" onclick="setDecorTarget('right')">SAĞA KOY</button></div>
-        <div id="my-decor-list" style="width:90%; display:flex; flex-wrap:wrap; gap:10px; justify-content:center;"></div>
-    </div>
-
-    <div id="panel-pet-select" class="modal hidden">
+    <div id="panel-settings" class="modal hidden">
         <div class="close-btn" onclick="window.closePanels()">×</div>
-        <h2 style="color:#f1c40f;">YOLDAŞLARIM</h2>
-        <div id="pet-grid"></div>
-        <div style="margin-top: 20px; font-size: 9px; color: #aaa; text-align: center;">Bebek: 120dk | Genç: 600dk | Boss: 2000dk</div>
-    </div>
-
-    <div id="admin-login-modal" class="modal hidden"><div class="close-btn" onclick="window.closePanels()">×</div><h2>ADMIN</h2><input type="text" id="admin-user" class="auth-input" placeholder="User"><input type="password" id="admin-pass" class="auth-input" placeholder="Pass"><button class="btn" onclick="window.verifyAdmin()">GİRİŞ</button></div>
-    
-    <div id="admin-panel" class="modal hidden">
-        <div class="close-btn" onclick="window.closePanels()">×</div><h2 style="color:red;">YÖNETİCİ</h2>
-        <div id="admin-panel-content">
-            <div style="width:90%;">
-                <h3>GENEL AYARLAR</h3>
-                Altın Çarpanı: <input id="admin-gold-rate" class="admin-input" placeholder="1"> <button class="btn" onclick="updateGoldRate()">OK</button>
-                <br>Ramazan Farkı (dk): <input id="admin-ramadan-offset" class="admin-input" placeholder="+10"> <button class="btn" onclick="updateRamadanOffset()">OK</button>
-                <hr><h3>MARKET FİYATLARI</h3><div id="admin-market-list" style="max-height:150px; overflow-y:auto; border:1px solid #444; padding:5px; margin-bottom:10px;"></div>
-                <hr><h3>YENİ ETİKET</h3><input id="new-tag-id" class="admin-input" placeholder="ID"> <input id="new-tag-name" class="admin-input" placeholder="İsim"> <input id="new-tag-cost" class="admin-input" placeholder="Fiyat"><button class="btn" onclick="addNewNametag()">EKLE</button>
-                <hr><h3>ETİKET SİL</h3><div style="display:flex; gap:5px;"><select id="delete-tag-select" class="admin-select"></select><button class="btn" style="background:red" onclick="deleteTagFromSelect()">SİL</button></div>
-                <hr><h3>ETİKET RENK DÜZENLE</h3><select id="tag-id-select" class="admin-select"></select><input id="tag-color-edit" class="admin-input" placeholder="Hex (#ff0)" style="width:100px"> <button class="btn" onclick="editTagColor()">DEĞİŞTİR</button>
-                <hr><h3>CEZA SİSTEMİ</h3><select id="punish-user-select" class="admin-select"></select><input id="punish-tag" class="admin-input" placeholder="Tag (İbiş)"> <input id="punish-color" class="admin-input" placeholder="Renk (#ccc)"> <input id="punish-days" class="admin-input" placeholder="Gün"><button class="btn" style="background:red" onclick="punishUser()">CEZA VER</button>
+        <h2 style="color:#fff;">AYARLAR</h2>
+        <div style="width:90%; max-width:400px; text-align:center; color:#aaa; margin-top: 20px; border: 1px solid #333; padding: 20px; background: rgba(0,0,0,0.5); border-radius: 10px;">
+            <h3 style="color:#f1c40f; margin-bottom:10px; font-size:12px;">📍 ŞEHİR SEÇİMİ</h3>
+            <select id="user-city-select" class="admin-select" onchange="window.changeUserCity()" style="font-size: 10px; padding: 10px; margin-bottom: 25px;">
+                <option value="Bolu">Bolu</option>
+                <option value="Kayseri">Kayseri</option>
+                <option value="Eskisehir">Eskişehir</option>
+                <option value="Bursa">Bursa</option>
+                <option value="Istanbul">İstanbul</option>
+                <option value="Gebze">Gebze</option>
+            </select>
+            <hr style="border-color: #444; margin-bottom: 25px;">
+            <h3 style="color:#34db56; margin-bottom:15px; font-size:12px;">📻 RADYO SESİ</h3>
+            <div style="display:flex; align-items:center; gap:10px;">
+                <span style="font-size: 14px;">🔈</span>
+                <input type="range" id="volume-slider" min="0" max="100" value="30" onchange="window.updateRadioVolume(this.value)" oninput="window.updateRadioVolume(this.value)">
+                <span style="font-size: 14px;">🔊</span>
             </div>
-            <hr><h3>SÜRE AYARLA</h3><select id="time-user-select" class="admin-select"></select><input id="time-amount" class="admin-input" placeholder="Net Dakika (Örn: 120)"> <button class="btn" onclick="modifyUserTime()">AYARLA</button>
-            <hr><h3>KULLANICILAR</h3><table class="admin-table"><thead><tr><th>İsim</th><th>Altın</th><th>Sil</th></tr></thead><tbody id="admin-users-list"></tbody></table>
         </div>
     </div>
 
+    <div id="admin-login-modal" class="modal hidden"><div class="close-btn" onclick="window.closePanels()">×</div><h2>ADMIN</h2><input type="text" id="admin-user" class="auth-input" placeholder="User"><input type="password" id="admin-pass" class="auth-input" placeholder="Pass"><button class="btn" onclick="window.verifyAdmin()">GİRİŞ</button></div>
+    <div id="admin-panel" class="modal hidden"><div class="close-btn" onclick="window.closePanels()">×</div><h2 style="color:red;">YÖNETİCİ</h2><div id="admin-panel-content"><div style="width:90%;"><h3>GENEL AYARLAR</h3>Altın Çarpanı: <input id="admin-gold-rate" class="admin-input" placeholder="1"> <button class="btn" onclick="updateGoldRate()">OK</button><br>Ramazan Farkı (dk): <input id="admin-ramadan-offset" class="admin-input" placeholder="+10"> <button class="btn" onclick="updateRamadanOffset()">OK</button><hr><h3>MARKET FİYATLARI</h3><div id="admin-market-list" style="max-height:150px; overflow-y:auto; border:1px solid #444; padding:5px; margin-bottom:10px;"></div><hr><h3>YENİ ETİKET</h3><input id="new-tag-id" class="admin-input" placeholder="ID"> <input id="new-tag-name" class="admin-input" placeholder="İsim"> <input id="new-tag-cost" class="admin-input" placeholder="Fiyat"><button class="btn" onclick="addNewNametag()">EKLE</button><hr><h3>ETİKET SİL</h3><div style="display:flex; gap:5px;"><select id="delete-tag-select" class="admin-select"></select><button class="btn" style="background:red" onclick="deleteTagFromSelect()">SİL</button></div><hr><h3>ETİKET RENK DÜZENLE</h3><select id="tag-id-select" class="admin-select"></select><input id="tag-color-edit" class="admin-input" placeholder="Hex (#ff0)" style="width:100px"> <button class="btn" onclick="editTagColor()">DEĞİŞTİR</button><hr><h3>CEZA SİSTEMİ</h3><select id="punish-user-select" class="admin-select"></select><input id="punish-tag" class="admin-input" placeholder="Tag (İbiş)"> <input id="punish-color" class="admin-input" placeholder="Renk (#ccc)"> <input id="punish-days" class="admin-input" placeholder="Gün"><button class="btn" style="background:red" onclick="punishUser()">CEZA VER</button></div><hr><h3>SÜRE AYARLA</h3><select id="time-user-select" class="admin-select"></select><input id="time-amount" class="admin-input" placeholder="Net Dakika (Örn: 120)"> <button class="btn" onclick="modifyUserTime()">AYARLA</button><hr><h3>KULLANICILAR</h3><table class="admin-table"><thead><tr><th>İsim</th><th>Altın</th><th>Sil</th></tr></thead><tbody id="admin-users-list"></tbody></table></div></div>
+
     <script>
         const firebaseConfig = { apiKey: "AIzaSyB_eX2AGPyepy0H_pbnLtwShCgF5Sr_ETQ", authDomain: "yks-koy.firebaseapp.com", projectId: "yks-koy", storageBucket: "yks-koy.firebasestorage.app", messagingSenderId: "400949745524", appId: "1:400949745524:web:f28d2bd3d408aa84bcfe21" };
+
+        const CITY_DATA = { 'Bolu': { lat: 40.735, lon: 31.606, apiName: 'Bolu' }, 'Kayseri': { lat: 38.7322, lon: 35.4853, apiName: 'Kayseri' }, 'Eskisehir': { lat: 39.7767, lon: 30.5206, apiName: 'Eskisehir' }, 'Bursa': { lat: 40.1824, lon: 29.0671, apiName: 'Bursa' }, 'Istanbul': { lat: 41.0082, lon: 28.9784, apiName: 'Istanbul' }, 'Gebze': { lat: 40.8028, lon: 29.4307, apiName: 'Gebze' } };
 
         const PETS_DB = {
             cat: { name: "Kedi", stages: ["https://i.ibb.co/k2Cb6qGY/kediyumurta-removebg-preview.png", "https://i.ibb.co/zTFPpmF5/bebekkedi-removebg-preview.png", "https://i.ibb.co/RpgHYN8s/genckedi-removebg-preview.png", "https://i.ibb.co/rRB3m7cR/bosskedi-removebg-preview.png"] },
@@ -300,79 +286,133 @@
 
         let itemsDB = { 
             'mystery_egg': { name: 'Gizemli Yumurta', cost: 5000, type: 'tool', img: 'https://i.ibb.co/k2Cb6qGY/kediyumurta-removebg-preview.png' }, 
-            'sign': { name: 'Motto Tabelası', cost: 5000, type: 'tool' }, 
-            'palette': { name: 'Renk Paleti', cost: 7500, type: 'tool' },
-            'fb_flag': { name: 'Fenerbahçe Bayrağı', cost: 2000, type: 'decor', img: 'https://upload.wikimedia.org/wikipedia/tr/8/86/Fenerbah%C3%A7e_SK.png' },
-            'gs_flag': { name: 'Galatasaray Bayrağı', cost: 2000, type: 'decor', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Galatasaray_Star_Logo.svg/1200px-Galatasaray_Star_Logo.svg.png' },
-            'bjk_flag': { name: 'Beşiktaş Bayrağı', cost: 2000, type: 'decor', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Besiktas_JK.svg/1200px-Besiktas_JK.svg.png' },
-            'coffee': { name: 'Türk Kahvesi', cost: 500, type: 'decor', img: 'https://cdn-icons-png.flaticon.com/512/3054/3054889.png' },
-            'probis': { name: 'Probis', cost: 300, type: 'decor', img: 'https://reimg-carrefour.mncdn.com/mnresize/600/600/productimage/30088907/30088907_0_MC/8796554330162_1499977322896.jpg' },
-            'icardi': { name: 'İcardi Forması', cost: 5000, type: 'decor', img: 'https://cdn-icons-png.flaticon.com/512/1760/1760959.png' },
-            'osimhen': { name: 'Osimhen Forması', cost: 5000, type: 'decor', img: 'https://cdn-icons-png.flaticon.com/512/1760/1760959.png' },
-            'fener1': { name: 'Fener Çubuklu', cost: 4000, type: 'decor', img: 'https://cdn-icons-png.flaticon.com/512/1760/1760959.png' },
-            'fener2': { name: 'Fener Gold', cost: 4000, type: 'decor', img: 'https://cdn-icons-png.flaticon.com/512/1760/1760959.png' },
+            'sign': { name: 'Motto Tabelası', cost: 5000, type: 'tool' }, 'palette': { name: 'Renk Paleti', cost: 7500, type: 'tool' },
+            'fb_flag': { name: 'Fenerbahçe Bayrağı', cost: 2000, type: 'decor', img: 'https://upload.wikimedia.org/wikipedia/tr/8/86/Fenerbah%C3%A7e_SK.png' }, 'gs_flag': { name: 'Galatasaray Bayrağı', cost: 2000, type: 'decor', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Galatasaray_Star_Logo.svg/1200px-Galatasaray_Star_Logo.svg.png' }, 'bjk_flag': { name: 'Beşiktaş Bayrağı', cost: 2000, type: 'decor', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Besiktas_JK.svg/1200px-Besiktas_JK.svg.png' },
+            'coffee': { name: 'Türk Kahvesi', cost: 500, type: 'decor', img: 'https://cdn-icons-png.flaticon.com/512/3054/3054889.png' }, 'probis': { name: 'Probis', cost: 300, type: 'decor', img: 'https://reimg-carrefour.mncdn.com/mnresize/600/600/productimage/30088907/30088907_0_MC/8796554330162_1499977322896.jpg' },
+            'icardi': { name: 'İcardi Forması', cost: 5000, type: 'decor', img: 'https://cdn-icons-png.flaticon.com/512/1760/1760959.png' }, 'osimhen': { name: 'Osimhen Forması', cost: 5000, type: 'decor', img: 'https://cdn-icons-png.flaticon.com/512/1760/1760959.png' }, 'fener1': { name: 'Fener Çubuklu', cost: 4000, type: 'decor', img: 'https://cdn-icons-png.flaticon.com/512/1760/1760959.png' }, 'fener2': { name: 'Fener Gold', cost: 4000, type: 'decor', img: 'https://cdn-icons-png.flaticon.com/512/1760/1760959.png' },
             'ataturk': { name: 'Atatürk Portresi', cost: 10000, type: 'decor', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Kemal_Atat%C3%BCrk_%281923%29.jpg/800px-Kemal_Atat%C3%BCrk_%281923%29.jpg' }
         };
         let nametagsDB = { 'tag_king': { name: '[KRAL]', cost: 10000, req: null, color: 'gold' }, 'tag_tyt': { name: '[TYT BİTTİ]', cost: 0, req: 'tyt_done', color: '#3498db' } };
-        
-        const curriculumData = {
-            tyt: { "Matematik": ["Temel Kavramlar", "Sayı Basamakları", "Bölme-Bölünebilme", "EBOB-EKOK", "Rasyonel Sayılar", "Basit Eşitsizlikler", "Mutlak Değer", "Üslü-Köklü", "Çarpanlara Ayırma", "Oran-Orantı", "Problemler", "Kümeler", "Fonksiyonlar", "Polinomlar", "Olasılık"], "Türkçe": ["Sözcükte Anlam", "Cümlede Anlam", "Paragraf", "Ses Bilgisi", "Yazım Kuralları", "Noktalama", "Sözcük Türleri", "Fiiller", "Cümlenin Öğeleri", "Cümle Türleri"], "Fizik": ["Fizik Bilimine Giriş", "Madde ve Özellikleri", "Hareket", "Kuvvet", "İş, Güç, Enerji", "Isı ve Sıcaklık", "Basınç", "Kaldırma Kuvveti", "Elektrostatik", "Optik"], "Kimya": ["Kimya Bilimi", "Atom ve Periyodik Sistem", "Kimyasal Türler", "Maddenin Halleri", "Doğa ve Kimya", "Kimyanın Temel Kanunları", "Karışımlar", "Asitler-Bazlar-Tuzlar", "Kimya Her Yerde"], "Biyoloji": ["Canlıların Ortak Öz.", "Temel Bileşenler", "Hücre", "Sınıflandırma", "Hücre Bölünmeleri", "Kalıtım", "Ekoloji"], "Tarih": ["Tarih ve Zaman", "İlk Çağ Uygarlıkları", "Orta Çağda Dünya", "İlk Türk Devletleri", "İslam Tarihi", "Türk-İslam Tarihi", "Osmanlı Kuruluş-Yükselme", "Değişim Çağında Avrupa", "Yakın Çağda Avrupa", "Milli Mücadele"], "Coğrafya": ["Doğa ve İnsan", "Dünya'nın Şekli ve Hareketi", "Coğrafi Konum", "Harita Bilgisi", "İklim Bilgisi", "İç ve Dış Kuvvetler", "Nüfus", "Yerleşme", "Ekonomik Faaliyetler", "Bölgeler", "Afetler"], "Felsefe": ["Felsefeye Giriş", "Bilgi Felsefesi", "Varlık Felsefesi", "Ahlak Felsefesi", "Sanat Felsefesi", "Din Felsefesi", "Siyaset Felsefesi"], "Din": ["İnanç", "İbadet", "Ahlak", "Hz. Muhammed", "Vahiyo ve Akıl", "İslam ve Bilim", "Anadolu'da İslam"] },
-            ayt: { "Matematik": ["Polinomlar", "2.Dereceden Denklemler", "Eşitsizlikler", "Parabol", "Trigonometri", "Logaritma", "Diziler", "Limit", "Türev", "İntegral"], "Fizik": ["Vektörler", "Bağıl Hareket", "Newton Hareket", "Atışlar", "İtme Momentum", "Tork Denge", "Elektrik", "Manyetizma", "Çembersel Hareket", "Harmonik Hareket", "Dalga Mekaniği", "Modern Fizik"], "Kimya": ["Modern Atom Teorisi", "Gazlar", "Sıvı Çözeltiler", "Kimyasal Tepkimelerde Enerji", "Hız", "Denge", "Kimya ve Elektrik", "Organik Kimya"], "Biyoloji": ["Sinir Sistemi", "Endokrin Sistem", "Duyu Organları", "Destek ve Hareket", "Sindirim", "Dolaşım", "Solunum", "Üriner Sistem", "Üreme", "Protein Sentezi", "Canlılık ve Enerji", "Fotosentez", "Bitki Biyolojisi"] }
-        };
+        const curriculumData = { tyt: { "Matematik": ["Temel Kavramlar", "Sayı Basamakları", "Bölme-Bölünebilme", "EBOB-EKOK", "Rasyonel Sayılar", "Basit Eşitsizlikler", "Mutlak Değer", "Üslü-Köklü", "Çarpanlara Ayırma", "Oran-Orantı", "Problemler", "Kümeler", "Fonksiyonlar", "Polinomlar", "Olasılık"], "Türkçe": ["Sözcükte Anlam", "Cümlede Anlam", "Paragraf", "Ses Bilgisi", "Yazım Kuralları", "Noktalama", "Sözcük Türleri", "Fiiller", "Cümlenin Öğeleri", "Cümle Türleri"], "Fizik": ["Fizik Bilimine Giriş", "Madde ve Özellikleri", "Hareket", "Kuvvet", "İş, Güç, Enerji", "Isı ve Sıcaklık", "Basınç", "Kaldırma Kuvveti", "Elektrostatik", "Optik"], "Kimya": ["Kimya Bilimi", "Atom ve Periyodik Sistem", "Kimyasal Türler", "Maddenin Halleri", "Doğa ve Kimya", "Kimyanın Temel Kanunları", "Karışımlar", "Asitler-Bazlar-Tuzlar", "Kimya Her Yerde"], "Biyoloji": ["Canlıların Ortak Öz.", "Temel Bileşenler", "Hücre", "Sınıflandırma", "Hücre Bölünmeleri", "Kalıtım", "Ekoloji"], "Tarih": ["Tarih ve Zaman", "İlk Çağ Uygarlıkları", "Orta Çağda Dünya", "İlk Türk Devletleri", "İslam Tarihi", "Türk-İslam Tarihi", "Osmanlı Kuruluş-Yükselme", "Değişim Çağında Avrupa", "Yakın Çağda Avrupa", "Milli Mücadele"], "Coğrafya": ["Doğa ve İnsan", "Dünya'nın Şekli ve Hareketi", "Coğrafi Konum", "Harita Bilgisi", "İkim Bilgisi", "İç ve Dış Kuvvetler", "Nüfus", "Yerleşme", "Ekonomik Faaliyetler", "Bölgeler", "Afetler"], "Felsefe": ["Felsefeye Giriş", "Bilgi Felsefesi", "Varlık Felsefesi", "Ahlak Felsefesi", "Sanat Felsefesi", "Din Felsefesi", "Siyaset Felsefesi"], "Din": ["İnanç", "İbadet", "Ahlak", "Hz. Muhammed", "Vahiyo ve Akıl", "İslam ve Bilim", "Anadolu'da İslam"] }, ayt: { "Matematik": ["Polinomlar", "2.Dereceden Denklemler", "Eşitsizlikler", "Parabol", "Trigonometri", "Logaritma", "Diziler", "Limit", "Türev", "İntegral"], "Fizik": ["Vektörler", "Bağıl Hareket", "Newton Hareket", "Atışlar", "İtme Momentum", "Tork Denge", "Elektrik", "Manyetizma", "Çembersel Hareket", "Harmonik Hareket", "Dalga Mekaniği", "Modern Fizik"], "Kimya": ["Modern Atom Teorisi", "Gazlar", "Sıvı Çözeltiler", "Kimyasal Tepkimelerde Enerji", "Hız", "Denge", "Kimya ve Elektrik", "Organik Kimya"], "Biyoloji": ["Sinir Sistemi", "Endokrin Sistem", "Duyu Organları", "Destek ve Hareket", "Sindirim", "Dolaşım", "Solunum", "Üriner Sistem", "Üreme", "Protein Sentezi", "Canlılık ve Enerji", "Fotosentez", "Bitki Biyolojisi"] } };
 
         let globalConfig = { goldRate: 1, ramadanOffset: 10 };
         firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
+        const auth = firebase.auth(); const db = firebase.firestore();
         let myUid=null, stopwatchInterval=null, userData={}, decorTarget=null;
-        let lastBreakStates = {}; let isFirstLoad = true;
+        let lastBreakStates = {}; 
+        let isFirstWeatherLoad = true; 
+        let currentCity = 'Bolu'; 
         let chartInstance = null;
+        let isFirstLoad = true; 
 
-        window.handleAuth = async function(type) {
-            const u = document.getElementById('username').value.trim(); const p = document.getElementById('password').value.trim();
-            if(!u || !p) return; const email = u.toLowerCase() + "@yks-koy.com";
-            const remember = document.getElementById('remember-me').checked;
-            const persistence = remember ? firebase.auth.Auth.Persistence.LOCAL : firebase.auth.Auth.Persistence.SESSION;
-            try {
-                await auth.setPersistence(persistence);
-                if (type === 'login') await auth.signInWithEmailAndPassword(email, p);
-                else {
-                    const c = await auth.createUserWithEmailAndPassword(email, p);
-                    await db.collection('users').doc(c.user.uid).set({ 
-                        username: u, wallet: 500, completedTopics: [], todayTime: 0, weeklyTime: 0, lastResetWeek: getWeekNumber(new Date()), lastWorkDate: new Date().toLocaleDateString('tr-TR'), 
-                        timer: {state: 'idle', startTime: 0, pauseStart: 0}, villageText: "YKS 2026", mottoColor: "#f1c40f", activeNametag: "", ownedNametags: [], decors: {left:null, right:null},
-                        dailyHistory: {}, pets: {}, activePetType: null
+        // --- %100 ÇALIŞAN (MP3) RADYO SİSTEMİ ---
+        const AUDIO_STATIONS = {
+            'lofi': 'https://stream.zeno.fm/f3wvbbqmdg8uv', 
+            'fire': 'https://freesound.org/data/previews/220/220673_4100837-lq.mp3',
+            'rain': 'https://freesound.org/data/previews/174/174539_3219676-lq.mp3' 
+        };
+
+        let currentRadioStation = 'none';
+        let isRadioPlaying = false;
+        let playPromise = null;
+
+        window.toggleRadioMenu = function() { 
+            document.getElementById('radio-menu').classList.toggle('open'); 
+        };
+
+        window.changeRadioStation = function(stationKey) {
+            document.querySelectorAll('.radio-option').forEach(el => el.classList.remove('active'));
+            document.getElementById('r-opt-' + stationKey).classList.add('active');
+            window.toggleRadioMenu();
+
+            currentRadioStation = stationKey;
+            const playBtn = document.getElementById('radio-play-btn');
+            const audioEl = document.getElementById('zen-audio');
+
+            if (stationKey === 'none') {
+                audioEl.pause();
+                isRadioPlaying = false;
+                playBtn.innerText = '▶️';
+                return;
+            }
+
+            audioEl.pause();
+            audioEl.src = AUDIO_STATIONS[stationKey];
+            audioEl.load(); 
+            
+            let vol = document.getElementById('volume-slider').value;
+            audioEl.volume = vol / 100;
+            
+            isRadioPlaying = true;
+            playPromise = audioEl.play();
+            
+            if (playPromise !== undefined) {
+                playPromise.then(_ => {
+                    playBtn.innerText = '⏸️';
+                }).catch(error => {
+                    console.log("Tarayıcı engeli:", error);
+                    isRadioPlaying = false;
+                    playBtn.innerText = '▶️';
+                });
+            }
+        };
+
+        window.toggleRadioPlay = function() {
+            const audioEl = document.getElementById('zen-audio');
+            const playBtn = document.getElementById('radio-play-btn');
+            
+            if(currentRadioStation === 'none') {
+                window.changeRadioStation('lofi');
+                return;
+            }
+
+            if (isRadioPlaying) { 
+                if (playPromise !== undefined) {
+                    playPromise.then(_ => {
+                        audioEl.pause();
+                        isRadioPlaying = false;
+                        playBtn.innerText = '▶️'; 
+                    });
+                } else {
+                    audioEl.pause();
+                    isRadioPlaying = false;
+                    playBtn.innerText = '▶️';
+                }
+            } else { 
+                isRadioPlaying = true;
+                playPromise = audioEl.play();
+                if (playPromise !== undefined) {
+                    playPromise.then(_ => {
+                        playBtn.innerText = '⏸️';
+                    }).catch(error => {
+                        console.log("Oynatma hatası:", error);
+                        isRadioPlaying = false;
+                        playBtn.innerText = '▶️';
                     });
                 }
-            } catch (e) { 
-                if(e.code === 'auth/email-already-in-use') alert("İsim zaten var! GİRİŞ yap.");
-                else document.getElementById('error-msg').innerText = "Hata: " + e.message; 
             }
+        };
+
+        window.updateRadioVolume = function(val) { 
+            const audioEl = document.getElementById('zen-audio');
+            if(audioEl) audioEl.volume = val / 100; 
+        };
+        // ------------------------------
+
+        window.handleAuth = async function(type) {
+            const u = document.getElementById('username').value.trim(); const p = document.getElementById('password').value.trim(); if(!u || !p) return; const email = u.toLowerCase() + "@yks-koy.com"; const remember = document.getElementById('remember-me').checked; const persistence = remember ? firebase.auth.Auth.Persistence.LOCAL : firebase.auth.Auth.Persistence.SESSION;
+            try { await auth.setPersistence(persistence); if (type === 'login') await auth.signInWithEmailAndPassword(email, p); else { const c = await auth.createUserWithEmailAndPassword(email, p); await db.collection('users').doc(c.user.uid).set({ username: u, wallet: 500, completedTopics: [], todayTime: 0, weeklyTime: 0, lastResetWeek: getWeekNumber(new Date()), lastWorkDate: new Date().toLocaleDateString('tr-TR'), timer: {state: 'idle', startTime: 0, pauseStart: 0}, villageText: "YKS 2026", mottoColor: "#f1c40f", activeNametag: "", ownedNametags: [], decors: {left:null, right:null}, dailyHistory: {}, pets: {}, activePetType: null, city: 'Bolu' }); } } catch (e) { if(e.code === 'auth/email-already-in-use') alert("İsim zaten var! GİRİŞ yap."); else document.getElementById('error-msg').innerText = "Hata: " + e.message; }
         };
         window.logout = function() { auth.signOut().then(() => window.location.reload()); };
 
         auth.onAuthStateChanged(async u => {
             if(u) {
-                myUid = u.uid;
-                const docCheck = await db.collection('users').doc(myUid).get();
-                if(!docCheck.exists) { 
-                    const recoveredUsername = u.email.split('@')[0]; 
-                    await db.collection('users').doc(myUid).set({ 
-                        username: recoveredUsername, wallet: 500, completedTopics: [], todayTime: 0, weeklyTime: 0, 
-                        lastResetWeek: getWeekNumber(new Date()), lastWorkDate: new Date().toLocaleDateString('tr-TR'), 
-                        timer: {state: 'idle', startTime: 0, breakStart: 0}, villageText: "YKS 2026", mottoColor: "#f1c40f", activeNametag: "", ownedNametags: [], decors: {left:null, right:null},
-                        dailyHistory: {}, pets: {}, activePetType: null
-                    });
-                }
+                myUid = u.uid; const docCheck = await db.collection('users').doc(myUid).get();
+                if(!docCheck.exists) { const recoveredUsername = u.email.split('@')[0]; await db.collection('users').doc(myUid).set({ username: recoveredUsername, wallet: 500, completedTopics: [], todayTime: 0, weeklyTime: 0, lastResetWeek: getWeekNumber(new Date()), lastWorkDate: new Date().toLocaleDateString('tr-TR'), timer: {state: 'idle', startTime: 0, breakStart: 0}, villageText: "YKS 2026", mottoColor: "#f1c40f", activeNametag: "", ownedNametags: [], decors: {left:null, right:null}, dailyHistory: {}, pets: {}, activePetType: null, city: 'Bolu' }); }
                 const conf = await db.collection('global').doc('config').get();
-                if(conf.exists) { 
-                    globalConfig = conf.data(); 
-                    if(globalConfig.items) itemsDB = { ...itemsDB, ...globalConfig.items }; 
-                    if(globalConfig.nametags) nametagsDB = { ...nametagsDB, ...globalConfig.nametags }; 
-                    if(globalConfig.ramadanOffset === undefined) globalConfig.ramadanOffset = 10;
-                }
+                if(conf.exists) { globalConfig = conf.data(); if(globalConfig.items) itemsDB = { ...itemsDB, ...globalConfig.items }; if(globalConfig.nametags) nametagsDB = { ...nametagsDB, ...globalConfig.nametags }; if(globalConfig.ramadanOffset === undefined) globalConfig.ramadanOffset = 10; }
                 document.getElementById('auth-screen').classList.add('hidden'); document.getElementById('game-ui').classList.remove('hidden');
-                initZenMode(); fetchWeather(); startRamadanTimer(); setInterval(updateExamCounters, 1000);
+                initZenMode(); setInterval(updateExamCounters, 1000);
             } else { document.getElementById('auth-screen').classList.remove('hidden'); }
         });
 
@@ -383,6 +423,9 @@
             db.collection('users').doc(myUid).onSnapshot(async d => {
                 if(d.exists) {
                     userData = d.data();
+                    let cityChanged = false;
+                    if (userData.city && userData.city !== currentCity) { currentCity = userData.city; cityChanged = true; } else if (!userData.city) { await db.collection('users').doc(myUid).update({ city: 'Bolu' }); currentCity = 'Bolu'; cityChanged = true; }
+                    if (isFirstWeatherLoad || cityChanged) { document.getElementById('user-city-select').value = currentCity; fetchWeather(); startRamadanTimer(); isFirstWeatherLoad = false; }
                     if(userData.pets === undefined) { userData.pets = {}; await db.collection('users').doc(myUid).update({ pets: {} }); }
                     const today = new Date().toLocaleDateString('tr-TR'); const curWeek = getWeekNumber(new Date());
                     if(userData.lastWorkDate !== today) await db.collection('users').doc(myUid).update({ todayTime: 0, lastWorkDate: today });
@@ -390,47 +433,31 @@
                     if(userData.punish && userData.punish.until > Date.now()) { if(userData.activeNametag !== 'tag_punish') await db.collection('users').doc(myUid).update({ activeNametag: 'tag_punish' }); }
 
                     const tag = userData.activeNametag ? `<span class="nametag-display" style="color:${nametagsDB[userData.activeNametag]?.color||'gold'}; border-color:${nametagsDB[userData.activeNametag]?.color||'gold'}">${nametagsDB[userData.activeNametag]?.name||''}</span> ` : '';
-                    document.getElementById('player-name').innerHTML = tag + userData.username;
-                    document.getElementById('wallet-display').innerText = userData.wallet;
-                    
-                    let hasDecor = (userData.ownedNametags||[]).some(id => itemsDB[id] && itemsDB[id].type === 'decor');
-                    document.getElementById('edit-sign-btn').classList.toggle('hidden', !hasItem('sign'));
-                    document.getElementById('edit-color-btn').classList.toggle('hidden', !hasItem('palette'));
-                    document.getElementById('edit-decor-btn').classList.toggle('hidden', !hasDecor); 
-
-                    const mottoText = document.getElementById('motto-text');
-                    if(userData.villageText) { mottoText.innerText = userData.villageText; document.getElementById('center-container').classList.remove('hidden'); }
-                    if(userData.mottoColor) mottoText.style.color = userData.mottoColor;
-
+                    document.getElementById('player-name').innerHTML = tag + userData.username; document.getElementById('wallet-display').innerText = userData.wallet;
+                    let hasDecor = (userData.ownedNametags||[]).some(id => itemsDB[id] && itemsDB[id].type === 'decor'); document.getElementById('edit-sign-btn').classList.toggle('hidden', !hasItem('sign')); document.getElementById('edit-color-btn').classList.toggle('hidden', !hasItem('palette')); document.getElementById('edit-decor-btn').classList.toggle('hidden', !hasDecor); 
+                    const mottoText = document.getElementById('motto-text'); if(userData.villageText) { mottoText.innerText = userData.villageText; document.getElementById('center-container').classList.remove('hidden'); } if(userData.mottoColor) mottoText.style.color = userData.mottoColor;
                     updateDecor('left', userData.decors?.left); updateDecor('right', userData.decors?.right); checkStopwatch(); renderActivePet();
                 }
             });
         }
         
+        window.changeUserCity = async function() { const newCity = document.getElementById('user-city-select').value; await db.collection('users').doc(myUid).update({ city: newCity }); showNotification("Şehir güncellendi! Hava durumu ayarlanıyor..."); }
+
         function renderActivePet() {
             const emptySlot = document.getElementById('empty-pet-slot'); const activeImage = document.getElementById('active-pet-image'); const progressBg = document.getElementById('pet-progress-bg'); const progressBar = document.getElementById('pet-progress-bar');
             if (!userData.activePetType || !userData.pets || !userData.pets[userData.activePetType]) { emptySlot.style.display = 'flex'; activeImage.style.display = 'none'; progressBg.style.display = 'none'; } 
             else {
                 const petData = userData.pets[userData.activePetType]; const stage = petData.stage || 0; const xp = petData.xp || 0;
                 emptySlot.style.display = 'none'; activeImage.style.display = 'block'; activeImage.src = PETS_DB[userData.activePetType].stages[stage];
-                if (stage < 3) {
-                    progressBg.style.display = 'block'; let progress = 0; let currentStageStartXP = stage === 0 ? 0 : EVOLUTION_THRESHOLDS[stage - 1]; let nextStageXP = EVOLUTION_THRESHOLDS[stage];
-                    progress = ((xp - currentStageStartXP) / (nextStageXP - currentStageStartXP)) * 100; progressBar.style.width = `${Math.min(progress, 100)}%`;
-                } else { progressBg.style.display = 'none'; }
+                if (stage < 3) { progressBg.style.display = 'block'; let progress = 0; let currentStageStartXP = stage === 0 ? 0 : EVOLUTION_THRESHOLDS[stage - 1]; let nextStageXP = EVOLUTION_THRESHOLDS[stage]; progress = ((xp - currentStageStartXP) / (nextStageXP - currentStageStartXP)) * 100; progressBar.style.width = `${Math.min(progress, 100)}%`; } else { progressBg.style.display = 'none'; }
             }
         }
 
-        async function updatePetProgress(minutes) {
-            if (!userData.activePetType || !userData.pets || !userData.pets[userData.activePetType]) return;
-            const petType = userData.activePetType; let petMap = userData.pets; let newXP = (petMap[petType].xp || 0) + minutes; let newStage = petMap[petType].stage || 0;
-            if (newStage < 3 && newXP >= EVOLUTION_THRESHOLDS[newStage]) { newStage++; alert(`${PETS_DB[petType].name} evrimleşti!`); }
-            petMap[petType].xp = newXP; petMap[petType].stage = newStage;
-            await db.collection('users').doc(myUid).update({ pets: petMap });
-        }
+        async function updatePetProgress(minutes) { if (!userData.activePetType || !userData.pets || !userData.pets[userData.activePetType]) return; const petType = userData.activePetType; let petMap = userData.pets; let newXP = (petMap[petType].xp || 0) + minutes; let newStage = petMap[petType].stage || 0; if (newStage < 3 && newXP >= EVOLUTION_THRESHOLDS[newStage]) { newStage++; showNotification(`${PETS_DB[petType].name} evrimleşti!`); } petMap[petType].xp = newXP; petMap[petType].stage = newStage; await db.collection('users').doc(myUid).update({ pets: petMap }); }
 
         function hasItem(id) { return userData.ownedNametags && userData.ownedNametags.includes(id); }
         function updateDecor(side, itemId) { const el = document.getElementById('decor-'+side); if(itemId && itemsDB[itemId]) { el.style.backgroundImage = `url('${itemsDB[itemId].img}')`; el.style.display = 'block'; } else { el.style.display = 'none'; } }
-        async function fetchWeather() { try { const r = await fetch('https://api.open-meteo.com/v1/forecast?latitude=40.735&longitude=31.606&current_weather=true&daily=sunrise,sunset&timezone=Europe%2FIstanbul'); const d = await r.json(); document.getElementById('weather-info').innerText = `Bolu: ${d.current_weather.temperature}°C`; const effects = document.getElementById('weather-effects'); effects.innerHTML = ''; if(d.current_weather.weathercode >= 51 && d.current_weather.weathercode <= 67) createRain(effects); if(d.current_weather.weathercode >= 71 && d.current_weather.weathercode <= 86) createSnow(effects); const now = new Date(); const sunrise = new Date(d.daily.sunrise[0]); const sunset = new Date(d.daily.sunset[0]); updateDayNight(now >= sunrise && now < sunset); } catch(e) { updateDayNight(true); } }
+        async function fetchWeather() { const cData = CITY_DATA[currentCity] || CITY_DATA['Bolu']; try { const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${cData.lat}&longitude=${cData.lon}&current_weather=true&daily=sunrise,sunset&timezone=Europe%2FIstanbul`); const d = await r.json(); let displayName = currentCity; if(currentCity === 'Eskisehir') displayName = 'Eskişehir'; if(currentCity === 'Istanbul') displayName = 'İstanbul'; document.getElementById('weather-info').innerText = `${displayName}: ${d.current_weather.temperature}°C`; const effects = document.getElementById('weather-effects'); effects.innerHTML = ''; if(d.current_weather.weathercode >= 51 && d.current_weather.weathercode <= 67) createRain(effects); if(d.current_weather.weathercode >= 71 && d.current_weather.weathercode <= 86) createSnow(effects); const now = new Date(); const sunrise = new Date(d.daily.sunrise[0]); const sunset = new Date(d.daily.sunset[0]); updateDayNight(now >= sunrise && now < sunset); } catch(e) { updateDayNight(true); } }
         function updateDayNight(isDay) { document.getElementById('custom-background').className = isDay ? 'day-mode' : 'night-mode'; const authScreen = document.getElementById('auth-screen'); if(isDay) { authScreen.style.background = "linear-gradient(to bottom, #4facfe 0%, #00f2fe 100%)"; } else { authScreen.style.background = "linear-gradient(to bottom, #0f2027 0%, #203a43 50%, #2c5364 100%)"; } }
         function createRain(c) { for(let i=0; i<50; i++) { const r = document.createElement('div'); r.className='rain'; r.style.left = Math.random()*100+'vw'; r.style.animationDuration = (Math.random()*0.5 + 0.5)+'s'; c.appendChild(r); } }
         function createSnow(c) { for(let i=0; i<50; i++) { const s = document.createElement('div'); s.className='snow'; s.style.left = Math.random()*100+'vw'; s.style.animationDuration = (Math.random()*2 + 2)+'s'; c.appendChild(s); } }
@@ -442,10 +469,11 @@
         async function startRamadanTimer() {
             if(ramadanInterval) clearInterval(ramadanInterval);
             const now = new Date(); const dateStr = now.toLocaleDateString('en-GB').split('/').reverse().join('-'); 
+            const cData = CITY_DATA[currentCity] || CITY_DATA['Bolu'];
             try {
-                const r1 = await fetch(`https://api.aladhan.com/v1/timingsByCity/${dateStr}?city=Bolu&country=Turkey&method=13`); const d1 = await r1.json();
+                const r1 = await fetch(`https://api.aladhan.com/v1/timingsByCity/${dateStr}?city=${cData.apiName}&country=Turkey&method=13`); const d1 = await r1.json();
                 const tomorrow = new Date(now); tomorrow.setDate(tomorrow.getDate() + 1); const tmStr = tomorrow.toLocaleDateString('en-GB').split('/').reverse().join('-');
-                const r2 = await fetch(`https://api.aladhan.com/v1/timingsByCity/${tmStr}?city=Bolu&country=Turkey&method=13`); const d2 = await r2.json();
+                const r2 = await fetch(`https://api.aladhan.com/v1/timingsByCity/${tmStr}?city=${cData.apiName}&country=Turkey&method=13`); const d2 = await r2.json();
                 const todayImsak = new Date(dateStr + 'T' + d1.data.timings.Imsak + ':00'); const todayMaghrib = new Date(dateStr + 'T' + d1.data.timings.Maghrib + ':00'); const tomorrowImsak = new Date(tmStr + 'T' + d2.data.timings.Imsak + ':00');
                 const offset = globalConfig.ramadanOffset || 10; todayImsak.setMinutes(todayImsak.getMinutes() + offset); todayMaghrib.setMinutes(todayMaghrib.getMinutes() + offset); tomorrowImsak.setMinutes(tomorrowImsak.getMinutes() + offset);
                 const el = document.getElementById('ramadan-countdown'); el.style.display = 'block';
@@ -480,7 +508,7 @@
         window.startBreak = async function() { await db.collection('users').doc(myUid).update({ "timer.state": "break", "timer.breakStart": Date.now() }); };
         window.goToToilet = async function() { await db.collection('users').doc(myUid).update({ "timer.state": "toilet", "timer.pauseStart": Date.now() }); };
         window.returnFromToilet = async function() { const d = (await db.collection('users').doc(myUid).get()).data(); const pauseDuration = Date.now() - d.timer.pauseStart; await db.collection('users').doc(myUid).update({ "timer.state": "working", "timer.startTime": d.timer.startTime + pauseDuration }); };
-        window.handleToiletTimeout = async function(start, pauseStart) { const duration = pauseStart - start; const mins = Math.floor(duration / 60000); await db.collection('users').doc(myUid).update({ "timer.state": "idle", wallet: firebase.firestore.FieldValue.increment(Math.floor(mins * globalConfig.goldRate)), weeklyTime: firebase.firestore.FieldValue.increment(duration), todayTime: firebase.firestore.FieldValue.increment(duration) }); await db.collection('users').doc(myUid).collection('logs').add({ start: start, end: pauseStart, duration: duration, note: "Timeout" }); alert("Tuvalet süresi doldu!"); };
+        window.handleToiletTimeout = async function(start, pauseStart) { const duration = pauseStart - start; const mins = Math.floor(duration / 60000); await db.collection('users').doc(myUid).update({ "timer.state": "idle", wallet: firebase.firestore.FieldValue.increment(Math.floor(mins * globalConfig.goldRate)), weeklyTime: firebase.firestore.FieldValue.increment(duration), todayTime: firebase.firestore.FieldValue.increment(duration) }); await db.collection('users').doc(myUid).collection('logs').add({ start: start, end: pauseStart, duration: duration, note: "Timeout" }); showNotification("Tuvalet süresi doldu!"); };
         
         window.stopStopwatch = async function() {
             const d = (await db.collection('users').doc(myUid).get()).data();
@@ -490,7 +518,7 @@
             const dateKey = new Date().toLocaleDateString('tr-TR'); const dailyUpdate = {}; dailyUpdate[`dailyHistory.${dateKey}`] = firebase.firestore.FieldValue.increment(mins);
             await db.collection('users').doc(myUid).update({ "timer.state": "idle", wallet: firebase.firestore.FieldValue.increment(earned), weeklyTime: firebase.firestore.FieldValue.increment(duration), todayTime: firebase.firestore.FieldValue.increment(duration), ...dailyUpdate });
             await db.collection('users').doc(myUid).collection('logs').add({ start: d.timer.startTime, end: Date.now(), duration: duration });
-            alert(`${mins} dk çalıştın. +${earned} altın.`);
+            showNotification(`${mins} dk çalıştın. +${earned} altın.`);
             if (mins > 0) updatePetProgress(mins);
         };
 
@@ -522,7 +550,7 @@
         
         function loadLogs() { db.collection('users').doc(myUid).collection('logs').orderBy('end', 'desc').limit(20).onSnapshot(s => { const t = document.getElementById('work-log-table'); t.innerHTML = ''; const startOfDay = new Date(); startOfDay.setHours(0,0,0,0); s.forEach(doc => { const d=doc.data(); if(d.end < startOfDay.getTime()) return; const m=Math.floor(d.duration/60000); let c='log-dim'; if(m>60) c='log-bright'; if(m>120) c='log-gold'; t.innerHTML += `<tr><td style="color:#aaa">${new Date(d.start).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}-${new Date(d.end).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}</td><td class="${c}" style="text-align:right">${m} dk</td></tr>`; }); }); }
 
-        window.openPanel = function(p) { window.closePanels(); document.getElementById('panel-'+p).classList.remove('hidden'); document.getElementById('center-container').classList.add('hidden'); if(p==='shop') switchMarketTab('items'); else if(p==='players') loadRanking(); else if(p==='profile') { renderMyTags(); renderChart(); } else if(p==='tyt') renderCurriculum('tyt'); else if(p==='pet-select') renderPetSelectionModal(); };
+        window.openPanel = function(p) { window.closePanels(); document.getElementById('panel-'+p).classList.remove('hidden'); document.getElementById('center-container').classList.add('hidden'); if(p==='shop') switchMarketTab('items'); else if(p==='players') loadRanking(); else if(p==='profile') { renderMyTags(); renderChart(); } else if(p==='tyt') renderCurriculum('tyt'); else if(p==='pet-select') renderPetSelectionModal(); else if(p==='settings') { /* Settings is open */ } };
         window.closePanels = function() { document.querySelectorAll('.modal').forEach(e=>e.classList.add('hidden')); document.getElementById('center-container').classList.remove('hidden'); };
         
         window.switchMarketTab = function(tab) {
@@ -546,7 +574,7 @@
                 const randomPet = availablePets[Math.floor(Math.random() * availablePets.length)];
                 let petsMap = userData.pets || {}; petsMap[randomPet] = { stage: 0, xp: 0 };
                 await db.collection('users').doc(myUid).update({ wallet: firebase.firestore.FieldValue.increment(-cost), pets: petsMap });
-                alert(`Tebrikler! Bir ${PETS_DB[randomPet].name} yumurtası çıktı! Sağ alttan kuşanabilirsin.`);
+                showNotification(`Tebrikler! Bir ${PETS_DB[randomPet].name} yumurtası çıktı! Sağ alttan kuşanabilirsin.`);
                 switchMarketTab('items'); return;
             }
 
@@ -562,9 +590,9 @@
             Object.entries(ownedPets).forEach(([type, data]) => {
                 const petInfo = PETS_DB[type]; const stage = data.stage || 0; const imgUrl = petInfo.stages[stage]; const isActive = userData.activePetType === type;
                 let stageName = ["Yumurta", "Bebek", "Genç", "BOSS"][stage];
-                grid.innerHTML += `<div class="pet-card ${isActive ? 'active' : ''}" onclick="setActivePet('${type}')"><div class="stage-badge">${stageName}</div><img src="${imgUrl}"><div class="pet-info">${petInfo.name}</div>${isActive ? '<div style="color:#f1c40f; font-size:7px;">KUŞANILDI</div>' : ''}</div>`;
+                grid.innerHTML += `<div class="pet-card ${isActive ? 'active' : ''}" onclick="window.setActivePet('${type}')"><div class="stage-badge">${stageName}</div><img src="${imgUrl}"><div class="pet-info">${petInfo.name}</div>${isActive ? '<div style="color:#f1c40f; font-size:7px;">KUŞANILDI</div>' : ''}</div>`;
             });
-            grid.innerHTML += `<div class="pet-card" onclick="setActivePet(null)" style="background:#c0392b; border-color:#e74c3c;"><div style="font-size:30px; line-height:70px;">❌</div><div class="pet-info" style="color:#fff;">ÇIKAR</div></div>`;
+            grid.innerHTML += `<div class="pet-card" onclick="window.setActivePet(null)" style="background:#c0392b; border-color:#e74c3c;"><div style="font-size:30px; line-height:70px;">❌</div><div class="pet-info" style="color:#fff;">ÇIKAR</div></div>`;
         }
 
         window.setActivePet = async function(type) { await db.collection('users').doc(myUid).update({ activePetType: type }); renderPetSelectionModal(); }
