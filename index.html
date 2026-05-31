@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="YKS Odak">
+    <meta name="theme-color" content="#0f172a">
+    
+    <title>YKS Odak Merkezi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+    <style>
+        :root {
+            --bg: #0f172a;
+            --surface: #1e293b;
+            --surface-hover: #334155;
+            --primary: #3b82f6;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        
+        body { background-color: var(--bg); color: var(--text); height: 100vh; display: flex; overflow: hidden; user-select: none; }
+
+        /* Auth Screen */
+        #auth-screen { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 9999; }
+        .auth-card { background: var(--surface); padding: 40px; border-radius: 16px; width: 90%; max-width: 400px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.05); }
+        .auth-card h1 { color: var(--primary); margin-bottom: 20px; font-weight: 800; letter-spacing: -1px; }
+        .input-group { margin-bottom: 15px; }
+        .input-group input { width: 100%; padding: 12px; background: rgba(0,0,0,0.2); border: 1px solid var(--surface-hover); border-radius: 8px; color: white; outline: none; transition: border 0.3s; }
+        .input-group input:focus { border-color: var(--primary); }
+        .btn { width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: transform 0.1s, opacity 0.2s; color: white; }
+        .btn:active { transform: scale(0.98); }
+        .btn-primary { background: var(--primary); }
+        .btn-success { background: var(--success); }
+        .btn-danger { background: var(--danger); }
+        .btn-warning { background: var(--warning); color: #000; }
+        .auth-buttons { display: flex; gap: 10px; margin-top: 20px; }
+
+        /* Main App Layout */
+        #app-screen { display: none; width: 100%; height: 100%; padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom); }
+        
+        /* Sidebar */
+        nav { width: 80px; background: var(--surface); border-right: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; align-items: center; padding: 20px 0; gap: 30px; z-index: 100; }
+        .nav-item { color: var(--text-muted); font-size: 24px; cursor: pointer; transition: color 0.3s; position: relative; padding: 10px; }
+        .nav-item:hover, .nav-item.active { color: var(--primary); }
+        .nav-item.active::after { content: ''; position: absolute; left: -25px; top: 50%; transform: translateY(-50%); width: 4px; height: 20px; background: var(--primary); border-radius: 0 4px 4px 0; }
+
+        /* Main Content */
+        main { flex: 1; display: flex; flex-direction: column; height: 100%; overflow: hidden; }
+        
+        /* Header */
+        header { height: 70px; display: flex; justify-content: space-between; align-items: center; padding: 0 30px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .user-info { display: flex; align-items: center; gap: 15px; font-weight: 600; }
+        .tools { display: flex; gap: 15px; color: var(--text-muted); font-size: 20px; }
+        .tools i { cursor: pointer; transition: color 0.2s; padding: 10px; }
+        .tools i:hover { color: white; }
+
+        /* Views */
+        .view { display: none; flex: 1; padding: 30px; overflow-y: auto; }
+        .view.active { display: flex; flex-direction: column; }
+
+        /* Timer View (Zen) */
+        #view-timer { align-items: center; justify-content: center; position: relative; }
+        .timer-ring { width: 300px; height: 300px; border-radius: 50%; border: 8px solid var(--surface); display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 0 50px rgba(0,0,0,0.2); position: relative; flex-shrink: 0; }
+        .timer-ring.active { border-color: var(--primary); box-shadow: 0 0 40px rgba(59, 130, 246, 0.3); }
+        .timer-ring.break { border-color: var(--warning); }
+        .time-display { font-size: 56px; font-weight: 800; letter-spacing: 2px; font-variant-numeric: tabular-nums; }
+        .timer-controls { display: flex; gap: 15px; margin-top: 40px; width: 100%; max-width: 400px; }
+        
+        /* Active Users Panel */
+        .active-users-panel { position: absolute; right: 30px; top: 30px; width: 280px; background: var(--surface); border-radius: 12px; padding: 15px; border: 1px solid rgba(255,255,255,0.05); max-height: calc(100% - 60px); overflow-y: auto; }
+        .active-users-panel h3 { font-size: 12px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .user-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; font-size: 13px; }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 8px; }
+        .status-dot.working { background: var(--success); box-shadow: 0 0 8px var(--success); }
+        .status-dot.break { background: var(--warning); box-shadow: 0 0 8px var(--warning); }
+        .duration-text { color: var(--text-muted); font-size: 12px; font-family: monospace; }
+        
+        /* Poke Feature */
+        .poke-btn { color: var(--warning); cursor: pointer; padding: 5px; opacity: 0.7; transition: 0.2s; font-size: 14px; }
+        .poke-btn:hover { opacity: 1; transform: scale(1.2); }
+        
+        .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.85); display: flex; align-items: center; justify-content: center; z-index: 10000; backdrop-filter: blur(4px); }
+        .mola-card { background: var(--surface); padding: 30px; border-radius: 16px; width: 90%; max-width: 350px; text-align: center; border: 1px solid var(--primary); box-shadow: 0 0 30px rgba(59, 130, 246, 0.2); }
+        .mola-card h3 { margin-bottom: 20px; color: white; font-weight: 600; }
+        
+        #toast-container { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 10001; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+        .toast { background: var(--surface-hover); color: white; padding: 12px 24px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); border-left: 4px solid var(--primary); font-size: 14px; font-weight: 600; animation: slideUp 0.3s ease-out forwards; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Curriculum View */
+        .subject-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; width: 100%; max-width: 1000px; margin: 0 auto; padding-bottom: 40px; }
+        .subject-card { background: var(--surface); border-radius: 12px; padding: 20px; border: 1px solid rgba(255,255,255,0.05); }
+        .subject-card h3 { color: var(--primary); margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
+        .topic-list { display: flex; flex-direction: column; gap: 8px; }
+        .topic-item { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--text-muted); cursor: pointer; }
+        .topic-item input[type="checkbox"] { accent-color: var(--primary); width: 18px; height: 18px; cursor: pointer; }
+        
+        audio { display: none; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            nav { width: 100%; height: 70px; flex-direction: row; justify-content: space-around; padding: 0; border-right: none; border-top: 1px solid rgba(255,255,255,0.05); order: 3; padding-bottom: env(safe-area-inset-bottom); }
+            .nav-item.active::after { top: -10px; left: 50%; transform: translateX(-50%); width: 20px; height: 4px; border-radius: 0 0 4px 4px; }
+            
+            #view-timer { justify-content: flex-start; padding-top: 20px; }
+            .timer-ring { width: 220px; height: 220px; margin-bottom: 10px; }
+            .time-display { font-size: 42px; }
+            .timer-controls { margin-top: 20px; }
+
+            /* Mobilde Aktif Kullanıcıları Göster (Alta Al) */
+            .active-users-panel { 
+                position: relative; 
+                right: auto; 
+                top: auto; 
+                width: 100%; 
+                max-width: 400px; 
+                margin-top: 30px; 
+                max-height: 250px; 
+            }
+            #toast-container { bottom: 90px; }
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="bg-audio" loop></audio>
+
+    <div id="mola-modal" class="modal-overlay" style="display: none;">
+        <div class="mola-card">
+            <h3 id="mola-modal-text">Biri sana Mola¿ diyor.</h3>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn btn-success" onclick="answerMola('yes')">Evet 😍</button>
+                <button class="btn btn-danger" onclick="answerMola('no')">Hayır 🥲</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-container"></div>
+
+    <div id="auth-screen">
+        <div class="auth-card">
+            <h1>YKS ODAK</h1>
+            <div class="input-group">
+                <input type="text" id="username" placeholder="Kullanıcı Adı" autocomplete="off">
+            </div>
+            <div class="input-group">
+                <input type="password" id="password" placeholder="Şifre">
+            </div>
+            <div class="auth-buttons">
+                <button class="btn btn-primary" onclick="handleAuth('login')">GİRİŞ</button>
+                <button class="btn btn-surface" style="background: var(--surface-hover);" onclick="handleAuth('register')">KAYIT</button>
+            </div>
+            <p id="auth-error" style="color: var(--danger); font-size: 12px; margin-top: 15px; display: none;"></p>
+        </div>
+    </div>
+
+    <div id="app-screen">
+        <nav>
+            <div class="nav-item active" onclick="switchView('timer', this)"><i class="fa-solid fa-clock"></i></div>
+            <div class="nav-item" onclick="switchView('curriculum', this)"><i class="fa-solid fa-book"></i></div>
+            <div class="nav-item" onclick="switchView('leaderboard', this)"><i class="fa-solid fa-trophy"></i></div>
+            <div style="flex: 1;"></div>
+            <div class="nav-item" style="color: var(--danger);" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i></div>
+        </nav>
+
+        <main>
+            <header>
+                <div class="user-info">
+                    <span id="display-username">Kullanıcı</span>
+                </div>
+                <div class="tools">
+                    <i class="fa-solid fa-headphones" id="audio-toggle" onclick="toggleAudio()" title="Lofi Aç/Kapat"></i>
+                </div>
+            </header>
+
+            <div id="view-timer" class="view active">
+                <div class="timer-ring" id="timer-ring">
+                    <div class="time-display" id="time-display">00:00:00</div>
+                    <div id="timer-status" style="color: var(--text-muted); margin-top: 10px; font-size: 14px;">BEKLİYOR</div>
+                </div>
+
+                <div class="timer-controls">
+                    <button id="btn-start" class="btn btn-primary" onclick="startTimer()"><i class="fa-solid fa-play"></i> ODAKLAN</button>
+                    <button id="btn-break" class="btn btn-warning" style="display: none;" onclick="startBreak()"><i class="fa-solid fa-mug-hot"></i> MOLA</button>
+                    <button id="btn-stop" class="btn btn-danger" style="display: none;" onclick="stopTimer()"><i class="fa-solid fa-stop"></i> BİTİR</button>
+                </div>
+
+                <div class="active-users-panel">
+                    <h3>Şu An Odaklananlar</h3>
+                    <div id="active-users-list">
+                        </div>
+                </div>
+            </div>
+
+            <div id="view-curriculum" class="view">
+                <h2 style="margin-bottom: 20px;">Sayısal Görev Tablosu</h2>
+                <div class="subject-grid" id="curriculum-grid">
+                    </div>
+            </div>
+
+            <div id="view-leaderboard" class="view">
+                <h2 style="margin-bottom: 20px;">Genel Sıralama</h2>
+                <div style="background: var(--surface); border-radius: 12px; padding: 20px; max-width: 600px;">
+                    <div id="leaderboard-list" style="display: flex; flex-direction: column; gap: 15px;">
+                        </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        // FIREBASE CONF
+        const firebaseConfig = { 
+            apiKey: "AIzaSyB_eX2AGPyepy0H_pbnLtwShCgF5Sr_ETQ", 
+            authDomain: "yks-koy.firebaseapp.com", 
+            projectId: "yks-koy", 
+            storageBucket: "yks-koy.firebasestorage.app", 
+            messagingSenderId: "400949745524", 
+            appId: "1:400949745524:web:f28d2bd3d408aa84bcfe21" 
+        };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth(); 
+        const db = firebase.firestore();
+
+        // APP STATE
+        let currentUser = null;
+        let userData = {};
+        let timerInterval = null;
+        let audioPlaying = false;
+        
+        let activeUsersData = [];
+        let uiUpdateInterval = null;
+
+        // MÜFREDAT
+        const aytSayisal = {
+            "AYT Matematik": ["Polinomlar", "2.Dereceden Denklemler", "Trigonometri", "Logaritma", "Diziler", "Limit", "Türev", "İntegral"],
+            "AYT Fizik": ["Vektörler", "Newton Hareket", "Atışlar", "Çembersel Hareket", "Dalga Mekaniği", "Modern Fizik"],
+            "AYT Kimya": ["Modern Atom", "Gazlar", "Sıvı Çözeltiler", "Hız", "Denge", "Organik Kimya"],
+            "AYT Biyoloji": ["Sistemler", "Genden Proteine", "Canlılık ve Enerji", "Bitki Biyolojisi"]
+        };
+
+        // --- AUTHENTICATION ---
+        auth.onAuthStateChanged(async user => {
+            if (user) {
+                currentUser = user;
+                document.getElementById('auth-screen').style.display = 'none';
+                document.getElementById('app-screen').style.display = 'flex';
+                initApp();
+            } else {
+                document.getElementById('auth-screen').style.display = 'flex';
+                document.getElementById('app-screen').style.display = 'none';
+                if (uiUpdateInterval) clearInterval(uiUpdateInterval);
+            }
+        });
+
+        async function handleAuth(type) {
+            const u = document.getElementById('username').value.trim();
+            const p = document.getElementById('password').value.trim();
+            const err = document.getElementById('auth-error');
+            if(!u || !p) { err.innerText = "Alanları doldur."; err.style.display = 'block'; return; }
+            
+            const email = u.toLowerCase() + "@yks-koy.com";
+            try {
+                if (type === 'login') {
+                    await auth.signInWithEmailAndPassword(email, p);
+                } else {
+                    const res = await auth.createUserWithEmailAndPassword(email, p);
+                    await db.collection('users').doc(res.user.uid).set({
+                        username: u,
+                        completedTopics: [],
+                        totalTime: 0, 
+                        timer: { state: 'idle', start: 0 }
+                    });
+                }
+            } catch (error) {
+                err.innerText = "Giriş başarısız. Kullanıcı adı veya şifre hatalı.";
+                err.style.display = 'block';
+            }
+        }
+
+        function logout() { auth.signOut(); }
+
+        // --- CORE APP LOGIC ---
+        function initApp() {
+            db.collection('users').doc(currentUser.uid).onSnapshot(doc => {
+                if (doc.exists) {
+                    userData = doc.data();
+                    document.getElementById('display-username').innerText = userData.username;
+                    renderTimerState(userData.timer);
+                    renderCurriculum();
+                    handlePokes(); 
+                }
+            });
+
+            db.collection('users').onSnapshot(snap => {
+                const leaderboard = document.getElementById('leaderboard-list');
+                leaderboard.innerHTML = '';
+                
+                let allUsers = [];
+                activeUsersData = []; 
+                
+                snap.forEach(doc => {
+                    const data = doc.data();
+                    data.uid = doc.id; 
+                    allUsers.push(data);
+                    
+                    if (data.timer && data.timer.state !== 'idle' && data.username !== 'ADMIN') {
+                        activeUsersData.push(data);
+                    }
+                });
+
+                renderActiveUsersUI(); 
+
+                allUsers.sort((a,b) => ((b.totalTime || b.weeklyTime || 0) - (a.totalTime || a.weeklyTime || 0)))
+                    .filter(u => u.username !== 'ADMIN')
+                    .slice(0, 10)
+                    .forEach((u, i) => {
+                        let mins = Math.floor((u.totalTime || u.weeklyTime || 0) / 60000);
+                        leaderboard.innerHTML += `
+                            <div style="display:flex; justify-content:space-between; padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                <span><strong style="color: ${i===0?'var(--warning)':'white'}">#${i+1}</strong> ${u.username}</span>
+                                <span style="color: var(--primary); font-family: monospace;">${mins} dk</span>
+                            </div>
+                        `;
+                    });
+            });
+
+            if (!uiUpdateInterval) {
+                uiUpdateInterval = setInterval(renderActiveUsersUI, 10000);
+            }
+        }
+
+        function renderActiveUsersUI() {
+            const list = document.getElementById('active-users-list');
+            list.innerHTML = '';
+            
+            if (activeUsersData.length === 0) {
+                list.innerHTML = `<div style="color: var(--text-muted); font-size: 12px;">Şu an kimse odaklanmıyor.</div>`;
+                return;
+            }
+
+            activeUsersData.forEach(data => {
+                const isWorking = data.timer.state === 'working';
+                const startTime = data.timer.start || Date.now();
+                const diffMs = Date.now() - startTime;
+                const mins = Math.max(0, Math.floor(diffMs / 60000));
+
+                const pokeIcon = (isWorking && data.uid !== currentUser.uid) ? 
+                    `<i class="fa-solid fa-mug-hot poke-btn" title="Mola¿" onclick="sendMolaRequest('${data.uid}', '${data.username}')"></i>` : '';
+
+                list.innerHTML += `
+                    <div class="user-row">
+                        <div><span class="status-dot ${isWorking ? 'working' : 'break'}"></span>${data.username}</div>
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <span class="duration-text">${isWorking ? `Odakta (${mins}dk)` : `Molada (${mins}dk)`}</span>
+                            ${pokeIcon}
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function handlePokes() {
+            if (userData.incomingRequest) {
+                document.getElementById('mola-modal-text').innerText = `${userData.incomingRequest.fromName} sana Mola¿ diyor.`;
+                document.getElementById('mola-modal').style.display = 'flex';
+            } else {
+                document.getElementById('mola-modal').style.display = 'none';
+            }
+
+            if (userData.incomingResponse) {
+                const ans = userData.incomingResponse.answer === 'yes' ? 'Evet 😍' : 'Hayır 🥲';
+                showToast(`${userData.incomingResponse.fromName} molaya ${ans} dedi.`);
+                db.collection('users').doc(currentUser.uid).update({
+                    incomingResponse: firebase.firestore.FieldValue.delete()
+                });
+            }
+        }
+
+        async function sendMolaRequest(targetUid, targetName) {
+            await db.collection('users').doc(targetUid).update({
+                incomingRequest: {
+                    fromUid: currentUser.uid,
+                    fromName: userData.username
+                }
+            });
+            showToast(`${targetName} kişisine Mola¿ gönderildi!`);
+        }
+
+        async function answerMola(answer) {
+            document.getElementById('mola-modal').style.display = 'none';
+            const req = userData.incomingRequest;
+            if (!req) return;
+
+            await db.collection('users').doc(req.fromUid).update({
+                incomingResponse: {
+                    fromName: userData.username,
+                    answer: answer
+                }
+            });
+
+            await db.collection('users').doc(currentUser.uid).update({
+                incomingRequest: firebase.firestore.FieldValue.delete()
+            });
+        }
+
+        function showToast(message) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerText = message;
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transition = 'opacity 0.3s';
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+
+        function renderTimerState(timerObj) {
+            const state = timerObj?.state || 'idle';
+            const ring = document.getElementById('timer-ring');
+            const statusText = document.getElementById('timer-status');
+            const btnStart = document.getElementById('btn-start');
+            const btnBreak = document.getElementById('btn-break');
+            const btnStop = document.getElementById('btn-stop');
+
+            clearInterval(timerInterval);
+            ring.className = 'timer-ring';
+
+            if (state === 'idle') {
+                document.getElementById('time-display').innerText = "00:00:00";
+                statusText.innerText = "BEKLİYOR";
+                btnStart.style.display = 'block';
+                btnBreak.style.display = 'none';
+                btnStop.style.display = 'none';
+            } 
+            else if (state === 'working') {
+                ring.classList.add('active');
+                statusText.innerText = "ODAKLANILDI";
+                btnStart.style.display = 'none';
+                btnBreak.style.display = 'block';
+                btnStop.style.display = 'block';
+                timerInterval = setInterval(() => updateDisplay(timerObj.start), 1000);
+                updateDisplay(timerObj.start);
+            }
+            else if (state === 'break') {
+                ring.classList.add('break');
+                statusText.innerText = "MOLADA";
+                btnStart.style.display = 'block';
+                btnStart.innerHTML = '<i class="fa-solid fa-play"></i> DÖN';
+                btnBreak.style.display = 'none';
+                btnStop.style.display = 'block';
+                timerInterval = setInterval(() => updateDisplay(timerObj.start), 1000);
+                updateDisplay(timerObj.start);
+            }
+        }
+
+        function updateDisplay(startTime) {
+            const diff = Date.now() - startTime;
+            const h = Math.floor(diff/3600000).toString().padStart(2, '0');
+            const m = Math.floor((diff%3600000)/60000).toString().padStart(2, '0');
+            const s = Math.floor((diff%60000)/1000).toString().padStart(2, '0');
+            document.getElementById('time-display').innerText = `${h}:${m}:${s}`;
+        }
+
+        async function startTimer() {
+            await db.collection('users').doc(currentUser.uid).update({
+                'timer.state': 'working',
+                'timer.start': Date.now()
+            });
+        }
+
+        async function startBreak() {
+            if (userData.timer.state === 'working') {
+                const durationMs = Date.now() - userData.timer.start;
+                await db.collection('users').doc(currentUser.uid).update({
+                    'timer.state': 'break',
+                    'timer.start': Date.now(),
+                    totalTime: firebase.firestore.FieldValue.increment(durationMs)
+                });
+            } else {
+                await db.collection('users').doc(currentUser.uid).update({
+                    'timer.state': 'break',
+                    'timer.start': Date.now()
+                });
+            }
+        }
+
+        async function stopTimer() {
+            if (userData.timer.state === 'working') {
+                const durationMs = Date.now() - userData.timer.start;
+                await db.collection('users').doc(currentUser.uid).update({
+                    'timer.state': 'idle',
+                    'timer.start': 0,
+                    totalTime: firebase.firestore.FieldValue.increment(durationMs)
+                });
+            } else {
+                await db.collection('users').doc(currentUser.uid).update({ 
+                    'timer.state': 'idle',
+                    'timer.start': 0
+                });
+            }
+            document.getElementById('btn-start').innerHTML = '<i class="fa-solid fa-play"></i> ODAKLAN';
+        }
+
+        function renderCurriculum() {
+            const grid = document.getElementById('curriculum-grid');
+            grid.innerHTML = '';
+            const completed = userData.completedTopics || [];
+
+            Object.entries(aytSayisal).forEach(([subject, topics]) => {
+                let html = `<div class="subject-card"><h3>${subject}</h3><div class="topic-list">`;
+                topics.forEach(topic => {
+                    const isDone = completed.includes(topic);
+                    html += `
+                        <label class="topic-item">
+                            <input type="checkbox" onchange="toggleTopic('${topic}')" ${isDone ? 'checked' : ''}>
+                            <span style="${isDone ? 'text-decoration: line-through; opacity: 0.5;' : ''}">${topic}</span>
+                        </label>
+                    `;
+                });
+                html += `</div></div>`;
+                grid.innerHTML += html;
+            });
+        }
+
+        async function toggleTopic(topicName) {
+            const completed = userData.completedTopics || [];
+            if (completed.includes(topicName)) {
+                await db.collection('users').doc(currentUser.uid).update({
+                    completedTopics: firebase.firestore.FieldValue.arrayRemove(topicName)
+                });
+            } else {
+                await db.collection('users').doc(currentUser.uid).update({
+                    completedTopics: firebase.firestore.FieldValue.arrayUnion(topicName)
+                });
+            }
+        }
+
+        function switchView(viewId, el) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById('view-' + viewId).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            el.classList.add('active');
+        }
+
+        function toggleAudio() {
+            const audio = document.getElementById('bg-audio');
+            const icon = document.getElementById('audio-toggle');
+            
+            if (audioPlaying) {
+                audio.pause();
+                icon.style.color = 'var(--text-muted)';
+            } else {
+                audio.src = 'https://stream.zeno.fm/f3wvbbqmdg8uv'; 
+                audio.volume = 0.3;
+                audio.play();
+                icon.style.color = 'var(--primary)';
+            }
+            audioPlaying = !audioPlaying;
+        }
+    </script>
+</body>
+</html>
